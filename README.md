@@ -186,3 +186,5 @@ curl -X 'GET' 'http://...?pin=<YOUR_PIN>' -H 'accept: application/json' | jq
 ## Further links
 - UI to explore, publish and subscribe kafka messages: https://www.getkadeck.com/#/
 - UI to explore database: https://www.pgadmin.org/
+- UI to explore redis: https://www.npmjs.com/package/redis-commander
+- UI to publish and subscribe MQTT messages: https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm
