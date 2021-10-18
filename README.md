@@ -97,9 +97,8 @@ consul members
 - Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
 - Set host ip address as value for entry "KAFKA_ADVERTISED_LISTENERS" with key "LISTENER_EXT"
 
-### Update current guest ip address in dronesim project `binding.yaml` file
-- Determine host ip address. E.g., with ipconfig/ifconfig. like  192.168.178.83
-- Set host ip address as value for metadata entry "url" like "tcp://<GUEST_IP_ADDRESS>:1883"
+### Update `secrets.json` file wit current host and guest ip addresses
+- Determine ip addresses and update `secrets.json`. E.g., with ipconfig/ifconfig. like  192.168.178.83
 
 ### Build projects
 - in _rentadrone_, _smarttracker_ and _dronesim_ project folder
@@ -111,11 +110,17 @@ mvn clean package
 - in _rentadrone_ project folder
 ```shell
 # start infrastructure
-docker compose -f deploy-compose/docker-compose.infra.yml
+docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 
 # register service in consul
-consul services register -id=rentadrone-app-id
+consul services register -name=rentadrone-app-id
 # to deregister: consul services deregister -id=rentadrone-app-id
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
+
+# start service
+mvn -q spring-boot:run
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
@@ -125,20 +130,22 @@ consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy
 # start envoy with bootstraped config
 - envoy -c ../consul/envoy/rentadrone-bootstrap.json
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
-
-# start service
-mvn -q spring-boot:run
+# start dapr sidecar with ctrl+c
 ```
 - in _smarttracker_ project folder
 ```shell
 # start infrastructure
-docker compose -f deploy-compose/docker-compose.infra.yml
+docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 
 # register service in consul
-consul services register -id=smarttracker-app-id
+consul services register -name=smarttracker-app-id
 # to deregister: consul services deregister -id=smarttracker-app-id
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+
+# start service
+mvn -q spring-boot:run
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
@@ -148,17 +155,20 @@ consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/env
 # start envoy with bootstraped config
 - envoy -c ../consul/envoy/smarttracker-bootstrap.json
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+# start dapr sidecar with ctrl+c
 
-# start service
-mvn -q spring-boot:run
 ```
 - in _dronesim_ project folder
 ```shell
 # register service in consul
-consul services register -id=dronesim-app-id
+consul services register -name=dronesim-app-id
 # to deregister: consul services deregister -id=dronesim-app-id
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+
+# start service
+mvn -q spring-boot:run
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
@@ -168,11 +178,7 @@ consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/d
 # start envoy with bootstraped config
 - envoy -c ../consul/envoy/dronesim-bootstrap.json
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
-
-# start service
-mvn -q spring-boot:run
+# start dapr sidecar with ctrl+c
 ```
 
 ### Test an example delivery with postman
