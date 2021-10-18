@@ -17,7 +17,10 @@ Author https://github.com/satspeedy
 - Install dapr according to product website
   - see https://docs.dapr.io/getting-started/install-dapr-cli/
 - Configure Dapr
-  - Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml`
+  - On host machine: Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml`
+    - Windows: `%USERPROFILE%\.dapr\`
+    - Linux: `$HOME/.dapr`
+  - On guest machine: Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml` and replace _tracing_ endpointAddress `localhost` via host machine ip
     - Windows: `%USERPROFILE%\.dapr\`
     - Linux: `$HOME/.dapr`
   - Add local secret store file
@@ -179,3 +182,7 @@ mvn -q spring-boot:run
 curl -X 'GET' 'http://...?pin=<YOUR_PIN>' -H 'accept: application/json' | jq
 ```
 - Repeat the call after 2 minutes to see the currently attached coordinates in the payload
+
+## Further links
+- UI to explore, publish and subscribe kafka messages: https://www.getkadeck.com/#/
+- UI to explore database: https://www.pgadmin.org/

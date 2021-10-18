@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rentadrone-db
+spec:
+  selector:
+    app: rentadrone-db
+  ports:
+    - port: 25432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rentadrone-db
+spec:
+  selector:
+    matchLabels:
+      app: rentadrone-db
+  template:
+    metadata:
+      labels:
+        app: rentadrone-db
+    spec:
+      containers:
+        - name: rentadrone-db
+          image: postgres:13.1-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: rentadrone-db
+            - name: TZ
+              value: Europe/Berlin
+          volumeMounts:
+            - name: storage
+              mountPath: /data/rentadrone-db
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc

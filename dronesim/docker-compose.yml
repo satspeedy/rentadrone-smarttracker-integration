@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+
+  app:
+    image: 'com.hha/dronesim:latest'
+    build:
+      context: ""
+    container_name: 'dronesim-app'
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=host.docker.internal:9092
+      - TZ=Europe/Berlin
+    ports:
+      - '8282:8282'

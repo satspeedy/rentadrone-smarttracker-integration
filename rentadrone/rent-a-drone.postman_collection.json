@@ -1,0 +1,669 @@
+{
+	"info": {
+		"_postman_id": "3e232eb8-64d0-4aa3-8b87-f8f0b7490ead",
+		"name": "rent-a-drone",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "GET All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE a new User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.collectionVariables.set(\"rentadrone-created-user-id\", jsonResponse.id);\r",
+									"pm.collectionVariables.set(\"rentadrone-created-user-name\", jsonResponse.userName);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"{{$randomFirstName}}\",\r\n    \"name\": \"{{$randomFullName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET A User by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users/{{rentadrone-created-user-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users",
+								"{{rentadrone-created-user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH (partial) a User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{rentadrone-created-user-id}},\r\n    \"name\": \"{{$randomFullName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users/{{rentadrone-created-user-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users",
+								"{{rentadrone-created-user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE a User by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{rentadrone-created-user-id}},\r\n    \"userName\": \"{{$randomFirstName}}\",\r\n    \"name\": \"{{$randomFullName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users/{{rentadrone-created-user-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users",
+								"{{rentadrone-created-user-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/users/{{rentadrone-created-user-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"users",
+								"{{rentadrone-created-user-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delivery (Shipping)",
+			"item": [
+				{
+					"name": "GET All Deliveries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE a new Delivery",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.collectionVariables.set(\"rentadrone-created-delivery-id\", jsonResponse.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require(\"moment\")\r",
+									"// see here for variables like '$isoTimestamp': https://learning.postman.com/docs/writing-scripts/script-references/variables-list/\r",
+									"// current time with moment.js https://stackoverflow.com/questions/49637741/how-to-add-more-time-into-current-timestamp-of-postman\r",
+									"pm.collectionVariables.set('rentadrone-pickup-local-datetime', moment().add(2, 'hours').add(90, 'seconds').toISOString())\r",
+									"// random drone id\r",
+									"pm.collectionVariables.set(\"rentadrone-random-drone-id\", _.random(1, 50))"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"startAddress\": \"Hauptbahnhof, Europaplatz 1, 10557 Berlin\",\r\n        \"endAddress\": \"Hardenbergpl. 8, 10787 Berlin\",\r\n        \"pickupLocalDateTime\": \"{{rentadrone-pickup-local-datetime}}\",\r\n        \"droneId\": {{rentadrone-random-drone-id}},\r\n        \"userName\": \"{{rentadrone-user-username}}\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a Delivery by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries/{{rentadrone-created-delivery-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries",
+								"{{rentadrone-created-delivery-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Deliveries of a User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries/user/1",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH partial a Delivery",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{rentadrone-created-delivery-id}},\r\n    \"endAddress\": \"Pariser Platz, 10117 Berlin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries/{{rentadrone-created-delivery-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries",
+								"{{rentadrone-created-delivery-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE a Delivery by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require(\"moment\")\r",
+									"// see here for variables like '$isoTimestamp': https://learning.postman.com/docs/writing-scripts/script-references/variables-list/\r",
+									"// current time with moment.js https://stackoverflow.com/questions/49637741/how-to-add-more-time-into-current-timestamp-of-postman\r",
+									"pm.collectionVariables.set('rentadrone-pickup-local-datetime', moment().add(2, 'minutes').add(2, 'hours').toISOString())"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"id\": {{rentadrone-created-delivery-id}},\r\n        \"startAddress\": \"20099, Hachmannplatz 16 Hamburg\",\r\n        \"endAddress\": \"Platz d. Deutschen Einheit 4, 20457 Hamburg\",\r\n        \"pickupLocalDateTime\": \"{{rentadrone-pickup-local-datetime}}\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries/{{rentadrone-created-delivery-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries",
+								"{{rentadrone-created-delivery-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Delivery",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/shipping/deliveries/{{rentadrone-created-delivery-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"shipping",
+								"deliveries",
+								"{{rentadrone-created-delivery-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Drones",
+			"item": [
+				{
+					"name": "GET All Drones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE a new Drone",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.collectionVariables.set(\"rentadrone-created-drone-id\", jsonResponse.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nickName\": \"{{$randomFirstName}}\",\r\n    \"model\": \"{{$randomDomainWord}}\",\r\n    \"droneStatus\": \"PARKED\",\r\n    \"operationStatus\": \"OK\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET A Drone by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones/{{rentadrone-created-drone-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones",
+								"{{rentadrone-created-drone-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH (partial) a DRONE",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":{{rentadrone-created-drone-id}},\r\n    \"nickName\": \"{{$randomDomainWord}}\",\r\n    \"model\": \"{{$randomCurrencyCode}} Model\",\r\n    \"droneStatus\": \"PARKED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones/{{rentadrone-created-drone-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones",
+								"{{rentadrone-created-drone-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE a Drone by id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{rentadrone-created-drone-id}},\r\n    \"nickName\": \"{{$randomDomainWord}}\",\r\n    \"model\": \"{{$randomCurrencyCode}} Model\",\r\n    \"droneStatus\": \"PARKED\",\r\n    \"operationStatus\": \"OK\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones/{{rentadrone-created-drone-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones",
+								"{{rentadrone-created-drone-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a Drone",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{rentadrone-app-host}}:{{rentadrone-app-port}}/api/drones/{{rentadrone-created-drone-id}}",
+							"protocol": "http",
+							"host": [
+								"{{rentadrone-app-host}}"
+							],
+							"port": "{{rentadrone-app-port}}",
+							"path": [
+								"api",
+								"drones",
+								"{{rentadrone-created-drone-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "rentadrone-app-host",
+			"value": "127.0.0.1"
+		},
+		{
+			"key": "rentadrone-app-port",
+			"value": "8181"
+		},
+		{
+			"key": "rentadrone-drone-id",
+			"value": "6"
+		},
+		{
+			"key": "rentadrone-delivery-id",
+			"value": "9"
+		},
+		{
+			"key": "rentadrone-user-username",
+			"value": "admin"
+		},
+		{
+			"key": "rentadrone-user-id-admin",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-created-user-id",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-created-user-name",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-created-drone-id",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-created-delivery-id",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-created-rentadrone-created-drone-id",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-pickup-local-datetime",
+			"value": ""
+		},
+		{
+			"key": "rentadrone-random-drone-id",
+			"value": ""
+		}
+	]
+}

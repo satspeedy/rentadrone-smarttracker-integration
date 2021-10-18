@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rentadrone-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rentadrone-app
+  template:
+    metadata:
+      labels:
+        app: rentadrone-app
+    spec:
+      containers:
+        - name: rentadrone-app
+          image: com.hha/rentadrone:latest
+          ports:
+            - containerPort: 8181
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://rentadrone-db:25432/rentadrone-db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: postgres
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+            - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
+              value: host.minikube.internal:19092
+            - name: TZ
+              value: Europe/Berlin
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rentadrone-app
+spec:
+  selector:
+    app: rentadrone-app
+  ports:
+    - port: 80
+      targetPort: 8181
+  type: LoadBalancer
