@@ -100,13 +100,11 @@ docker compose -f deploy-compose/docker-compose.infra.yml down --remove-orphans
 - OpenAPI 3 data: http://localhost:8181/v3/api-docs
 - Postman Collection with example requests: [rent-a-drone.postman_collection.json](rent-a-drone.postman_collection.json)
 
-## Further links
-- UI to explore, publish and subscribe kafka messages: https://www.getkadeck.com/#/
-- UI to explore database: https://www.pgadmin.org/
-
 ## Open Tasks
 - [ ] No handling of exceptional cases because it is a demo project
 - [ ] DroneDTO and UserDTO to decouple from domain entities
 - [ ] Check reference between a drone and deliveries when deleting a drone
 - [ ] ObjectMapper to avoid custom and distributed mapTo...-Methods
 - [ ] Check Drone Operation Status when booking a delivery
+- [ ] Delete also the assigned Tracking to a Delivery whenever a full update of the Delivery is executed because a new Tracking will also be created
+- [ ] Add tests

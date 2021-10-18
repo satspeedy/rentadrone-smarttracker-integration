@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.hha.rentadrone.config.KafkaTopicNames.DELIVERY_START_TIME_REACHED;
+import static com.hha.rentadrone.config.TopicNames.DELIVERY_START_TIME_REACHED;
 import static com.hha.rentadrone.service.SchedulerService.JOB_DATA_MAP_DELIVERY_ID;
 
 @Slf4j
@@ -46,29 +46,30 @@ public class DeliveryQuartzJob extends QuartzJobBean {
     }
 
     private void triggerDelivery(Delivery delivery) {
-        log.info("DeliveryStartTimeReached - Triggering Drone with id {} for delivery with id {}", delivery.getDrone().getId(), delivery.getId());
         DeliveryStartTimeReachedEvent deliveryStartTimeReachedEvent = mapTo(delivery);
         kafkaSender.deliveryStartTimeReached(String.valueOf(delivery.getId()), deliveryStartTimeReachedEvent, DELIVERY_START_TIME_REACHED);
+        log.info("DeliveryStartTimeReached - Drone triggered with id {} for delivery with id {}", delivery.getDrone().getId(), delivery.getId());
     }
 
-    private DeliveryStartTimeReachedEvent mapTo(Delivery delivery) {
+    private DeliveryStartTimeReachedEvent mapTo(Delivery entity) {
         return DeliveryStartTimeReachedEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventDateTime(LocalDateTime.now())
-                .deliveryId(delivery.getId())
-                .startAddress(delivery.getStartAddress())
-                .endAddress(delivery.getEndAddress())
-                .startLatitude(delivery.getStartLatitude())
-                .startLongitude(delivery.getStartLongitude())
-                .endLatitude(delivery.getEndLatitude())
-                .endLongitude(delivery.getEndLongitude())
-                .pickupLocalDateTime(delivery.getPickupLocalDateTime())
-                .estimatedTimeOfArrival(delivery.getEstimatedTimeOfArrival())
-                .deliveryStatus(delivery.getDeliveryStatus().name())
-                .droneId(delivery.getDrone().getId())
-                .droneNickName(delivery.getDrone().getNickName())
-                .userId(delivery.getUser().getId())
-                .userName(delivery.getUser().getUserName())
+                .deliveryId(String.valueOf(entity.getId()))
+                .startAddress(entity.getStartAddress())
+                .endAddress(entity.getEndAddress())
+                .startLatitude(entity.getStartLatitude())
+                .startLongitude(entity.getStartLongitude())
+                .endLatitude(entity.getEndLatitude())
+                .endLongitude(entity.getEndLongitude())
+                .pickupLocalDateTime(entity.getPickupLocalDateTime())
+                .estimatedTimeOfArrival(entity.getEstimatedTimeOfArrival())
+                .trackingNumber(String.valueOf(entity.getTrackingNumber()))
+                .deliveryStatus(entity.getDeliveryStatus().name())
+                .droneId(String.valueOf(entity.getDrone().getId()))
+                .droneNickName(entity.getDrone().getNickName())
+                .userId(String.valueOf(entity.getUser().getId()))
+                .userName(entity.getUser().getUserName())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.hha.rentadrone.service;
 
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
+import com.hha.rentadrone.config.DaprConfiguration;
 import com.hha.rentadrone.domain.Delivery;
 import com.hha.rentadrone.domain.Drone;
 import com.hha.rentadrone.domain.User;
@@ -9,6 +10,7 @@ import com.hha.rentadrone.domain.enumeration.DeliveryStatus;
 import com.hha.rentadrone.domain.enumeration.DroneStatus;
 import com.hha.rentadrone.messaging.KafkaSender;
 import com.hha.rentadrone.messaging.event.DeliveryChangedEvent;
+import com.hha.rentadrone.messaging.event.DeliveryDeletedEvent;
 import com.hha.rentadrone.repository.DeliveryRepository;
 import com.hha.rentadrone.repository.DroneRepository;
 import com.hha.rentadrone.repository.UserRepository;
@@ -24,8 +26,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.hha.rentadrone.config.KafkaTopicNames.DELIVERY_CHANGED_TOPIC;
-import static com.hha.rentadrone.config.KafkaTopicNames.DELIVERY_DELETED_TOPIC;
+import static com.hha.rentadrone.config.TopicNames.DELIVERY_CHANGED_TOPIC;
+import static com.hha.rentadrone.config.TopicNames.DELIVERY_DELETED_TOPIC;
 
 @Slf4j
 @Service
@@ -73,20 +75,6 @@ public class DeliveryService {
         return mapEntityToDto(result);
     }
 
-    private DeliveryDTO mapEntityToDto(Delivery entity) {
-        return DeliveryDTO.builder()
-                .id(entity.getId())
-                .startAddress(entity.getStartAddress())
-                .endAddress(entity.getEndAddress())
-                .pickupLocalDateTime(entity.getPickupLocalDateTime())
-                .estimatedTimeOfArrival(entity.getEstimatedTimeOfArrival())
-                .deliveryStatus(entity.getDeliveryStatus().name())
-                .schedulerJobKey(entity.getSchedulerJobKey())
-                .droneId(entity.getDrone().getId())
-                .userName(entity.getUser().getUserName())
-                .build();
-    }
-
     /**
      * Map DTO to entity.
      * Except the droneId because for this the referenced drone is determined later and linked with it.
@@ -100,27 +88,46 @@ public class DeliveryService {
                 .estimatedTimeOfArrival(dto.getEstimatedTimeOfArrival())
                 .deliveryStatus(DeliveryStatus.SCHEDULED)
                 .schedulerJobKey(dto.getSchedulerJobKey())
+                .trackingNumber(dto.getTrackingNumber())
+                .trackingUrl(dto.getTrackingUrl())
                 .build();
     }
 
-    private DeliveryChangedEvent mapEntityToEvent(Delivery delivery) {
+    private DeliveryDTO mapEntityToDto(Delivery entity) {
+        return DeliveryDTO.builder()
+                .id(entity.getId())
+                .startAddress(entity.getStartAddress())
+                .endAddress(entity.getEndAddress())
+                .pickupLocalDateTime(entity.getPickupLocalDateTime())
+                .estimatedTimeOfArrival(entity.getEstimatedTimeOfArrival())
+                .deliveryStatus(entity.getDeliveryStatus().name())
+                .schedulerJobKey(entity.getSchedulerJobKey())
+                .droneId(entity.getDrone().getId())
+                .userName(entity.getUser().getUserName())
+                .trackingNumber(entity.getTrackingNumber())
+                .trackingUrl(entity.getTrackingUrl())
+                .build();
+    }
+
+    private DeliveryChangedEvent mapEntityToEvent(Delivery entity) {
         return DeliveryChangedEvent.builder()
                 .eventId(UUID.randomUUID().toString())
                 .eventDateTime(LocalDateTime.now())
-                .deliveryId(delivery.getId())
-                .startAddress(delivery.getStartAddress())
-                .endAddress(delivery.getEndAddress())
-                .startLatitude(delivery.getStartLatitude())
-                .startLongitude(delivery.getStartLongitude())
-                .endLatitude(delivery.getEndLatitude())
-                .endLongitude(delivery.getEndLongitude())
-                .pickupLocalDateTime(delivery.getPickupLocalDateTime())
-                .estimatedTimeOfArrival(delivery.getEstimatedTimeOfArrival())
-                .deliveryStatus(delivery.getDeliveryStatus().name())
-                .droneId(delivery.getDrone().getId())
-                .droneNickName(delivery.getDrone().getNickName())
-                .userId(delivery.getUser().getId())
-                .userName(delivery.getUser().getUserName())
+                .deliveryId(entity.getId())
+                .startAddress(entity.getStartAddress())
+                .endAddress(entity.getEndAddress())
+                .startLatitude(entity.getStartLatitude())
+                .startLongitude(entity.getStartLongitude())
+                .endLatitude(entity.getEndLatitude())
+                .endLongitude(entity.getEndLongitude())
+                .pickupLocalDateTime(entity.getPickupLocalDateTime())
+                .estimatedTimeOfArrival(entity.getEstimatedTimeOfArrival())
+                .deliveryStatus(entity.getDeliveryStatus().name())
+                .droneId(entity.getDrone().getId())
+                .droneNickName(entity.getDrone().getNickName())
+                .userId(entity.getUser().getId())
+                .userName(entity.getUser().getUserName())
+                .trackingNumber(entity.getTrackingNumber())
                 .build();
     }
 
@@ -159,25 +166,26 @@ public class DeliveryService {
     /**
      * Partially update a delivery.
      *
-     * @param deliveryDTO the entity to update partially.
-     * @return the persisted entity.
+     * @param dto the dto to update the entity partially.
+     * @return the persisted dto.
      */
     @SneakyThrows
-    public Optional<DeliveryDTO> partialUpdate(DeliveryDTO deliveryDTO) {
-        log.info("Request to partially update Delivery : {}", StringifyHelper.toJson(deliveryDTO));
+    public Optional<DeliveryDTO> partialUpdate(DeliveryDTO dto) {
+        log.info("Request to partially update Delivery : {}", StringifyHelper.toJson(dto));
 
         return deliveryRepository
-                .findById(deliveryDTO.getId())
-                .map(existingDelivery -> {
-                            updateStartAddress(deliveryDTO, existingDelivery);
-                            updateEndAddress(deliveryDTO, existingDelivery);
-                            updatePickupLocalDateTime(deliveryDTO, existingDelivery);
-                            updateDeliveryStatus(deliveryDTO, existingDelivery);
-                            updateSchedulerJobKey(deliveryDTO, existingDelivery);
-                            enrichDeliveryWithDrone(existingDelivery, deliveryDTO.getDroneId());
-                            enrichDeliveryWithUser(existingDelivery, deliveryDTO.getUserName());
-                            enrichDeliveryWithDirections(existingDelivery);
-                            return existingDelivery;
+                .findById(dto.getId())
+                .map(entity -> {
+                            updateStartAddress(dto, entity);
+                            updateEndAddress(dto, entity);
+                            updatePickupLocalDateTime(dto, entity);
+                            updateDeliveryStatus(dto, entity);
+                            updateTrackingNumberAndUrl(dto, entity);
+                            updateSchedulerJobKey(dto, entity);
+                            enrichDeliveryWithDrone(entity, dto.getDroneId());
+                            enrichDeliveryWithUser(entity, dto.getUserName());
+                            enrichDeliveryWithDirections(entity);
+                            return entity;
                         }
                 )
                 .map(deliveryRepository::save)
@@ -190,6 +198,13 @@ public class DeliveryService {
     private void updateSchedulerJobKey(DeliveryDTO delivery, Delivery existingDelivery) {
         if (delivery.getSchedulerJobKey() != null) {
             existingDelivery.setSchedulerJobKey(delivery.getSchedulerJobKey());
+        }
+    }
+
+    private void updateTrackingNumberAndUrl(DeliveryDTO dto, Delivery entity) {
+        if (dto.getTrackingNumber() != null) {
+            entity.setTrackingNumber(dto.getTrackingNumber());
+            entity.setTrackingUrl(DaprConfiguration.generateDaprInvokeUrlGetATracking(dto.getTrackingNumber()));
         }
     }
 
@@ -269,8 +284,18 @@ public class DeliveryService {
      */
     public void delete(Long id) {
         log.info("Request to delete Delivery : {}", id);
-        deliveryRepository.deleteById(id);
-        kafkaSender.sendMessage(String.valueOf(id), "{\"id\": " + id + "}", DELIVERY_DELETED_TOPIC);
+        Optional<Delivery> optFound = deliveryRepository.findById(id);
+        if (optFound.isPresent()) {
+            deliveryRepository.deleteById(id);
+            Delivery delivery = optFound.get();
+            DeliveryDeletedEvent deletedEvent = DeliveryDeletedEvent.builder()
+                    .eventId(UUID.randomUUID().toString())
+                    .eventDateTime(LocalDateTime.now())
+                    .deliveryId(delivery.getId())
+                    .trackingNumber(delivery.getTrackingNumber())
+                    .build();
+            kafkaSender.deliveryDeleted(deletedEvent.getEventId(), deletedEvent, DELIVERY_DELETED_TOPIC);
+        }
     }
 
     public void updateDeliveryStatusByDroneStatus(Long assignedDroneId, DroneStatus deriveFromDroneStatus, LocalDateTime atDesiredTime) {

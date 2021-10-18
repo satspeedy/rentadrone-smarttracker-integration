@@ -7,18 +7,22 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Transient;
+import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
+
+@Data
 @JsonDeserialize(builder = DeliveryDTO.DeliveryDTOBuilder.class)
 @Builder(builderClassName = "DeliveryDTOBuilder", toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeliveryDTO {
+public class DeliveryDTO implements Serializable {
 
     private Long id;
 
@@ -39,6 +43,21 @@ public class DeliveryDTO {
 
     @JsonIgnore
     private String schedulerJobKey;
+
+    @Positive
+    @NotBlank
+    @NotEmpty
+    @Size(min = 4, max = 4)
+    @Digits(integer=4, fraction=0)
+    @Transient
+    @Schema(accessMode = WRITE_ONLY)
+    private String trackingPin;
+
+    @Schema(accessMode = READ_ONLY)
+    private Long trackingNumber;
+
+    @Schema(accessMode = READ_ONLY)
+    private String trackingUrl;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class DeliveryDTOBuilder {

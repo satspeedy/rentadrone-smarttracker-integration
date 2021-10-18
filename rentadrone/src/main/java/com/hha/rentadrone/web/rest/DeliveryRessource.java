@@ -1,19 +1,26 @@
 package com.hha.rentadrone.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hha.rentadrone.config.DaprConfiguration;
 import com.hha.rentadrone.domain.Drone;
 import com.hha.rentadrone.domain.User;
 import com.hha.rentadrone.service.*;
 import com.hha.rentadrone.web.rest.dto.DeliveryDTO;
+import com.hha.rentadrone.web.rest.dto.smarttracker.TrackingDTO;
+import io.dapr.client.DaprClient;
+import io.dapr.client.domain.HttpExtension;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,15 +33,22 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static com.hha.rentadrone.config.DaprConfiguration.SMART_TRACKER_APP_ID;
+import static com.hha.rentadrone.config.DaprConfiguration.SMART_TRACKER_URL_PATH_CREATE_TRACKING;
+
 /**
  * REST controller for managing {@link DeliveryDTO}.
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/shipping")
+@RequestMapping(value = "/api/shipping", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryRessource {
 
     private static final int RETURN_FLIGHT_TO_HEAD_OFFICE_IN_MIN = 15;
+
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private final DeliveryService deliveryService;
 
@@ -44,11 +58,21 @@ public class DeliveryRessource {
 
     private final SchedulerService schedulerService;
 
-    public DeliveryRessource(DeliveryService deliveryService, DroneService droneService, UserService userService, SchedulerService schedulerService) {
+    private final DaprClient daprClient;
+
+    private final SecretManagementService secretManagementService;
+
+    public DeliveryRessource(DeliveryService deliveryService,
+                             DroneService droneService,
+                             UserService userService,
+                             SchedulerService schedulerService,
+                             DaprClient daprClient, SecretManagementService secretManagementService) {
         this.deliveryService = deliveryService;
         this.droneService = droneService;
         this.userService = userService;
         this.schedulerService = schedulerService;
+        this.daprClient = daprClient;
+        this.secretManagementService = secretManagementService;
     }
 
     /**
@@ -82,6 +106,12 @@ public class DeliveryRessource {
         Set<Long> availableDroneIds = determineAvailableDrones(null, dto.getPickupLocalDateTime());
         dto.setDroneId(assignAnotherDroneIfDesiredIsNotAvailable(dto.getDroneId(), availableDroneIds));
 
+        TrackingDTO tracking = invokeSmartTrackerCreateTracking(dto);
+        secretManagementService.setSecretTrackingPin(tracking.getTrackingNumber(), dto.getTrackingPin());
+        generateTrackingUrl(tracking);
+        dto.setTrackingNumber(tracking.getTrackingNumber());
+        dto.setTrackingUrl(tracking.getTrackingUrl());
+
         DeliveryDTO result = deliveryService.save(dto);
 
         JobDetail jobDetail = schedulerService.buildJobDetail(result.getId());
@@ -94,6 +124,27 @@ public class DeliveryRessource {
         return ResponseEntity
                 .created(new URI("/api/shipping/deliveries/" + result.getId()))
                 .body(result);
+    }
+
+    @SneakyThrows
+    private TrackingDTO invokeSmartTrackerCreateTracking(DeliveryDTO dto) {
+        TrackingDTO body = TrackingDTO.builder().build();
+        log.info("Body to send to {}: {}", SMART_TRACKER_APP_ID, StringifyHelper.toString(body));
+        byte[] byteResult = daprClient.invokeMethod(SMART_TRACKER_APP_ID,
+                        SMART_TRACKER_URL_PATH_CREATE_TRACKING,
+                        body,
+                        HttpExtension.POST,
+                        null,
+                        byte[].class)
+                .block();
+        TrackingDTO response = mapper.readValue(byteResult, TrackingDTO.class);
+        log.info("Tracking response from {}: {}", SMART_TRACKER_APP_ID, StringifyHelper.toString(response));
+        return response;
+    }
+
+    private void generateTrackingUrl(TrackingDTO response) {
+        String url = DaprConfiguration.generateDaprInvokeUrlGetATracking(response.getTrackingNumber());
+        response.setTrackingUrl(url);
     }
 
     private Set<Long> determineAvailableDrones(Long prevCreatedDeliveryId, LocalDateTime desiredPickupDateTime) {

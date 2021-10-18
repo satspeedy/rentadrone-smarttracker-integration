@@ -9,24 +9,25 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Data
-@JsonDeserialize(builder = DroneStatusChangedEvent.DroneStatusChangedEventBuilder.class)
-@Builder(builderClassName = "DroneStatusChangedEventBuilder", toBuilder = true)
+@JsonDeserialize(builder = DeliveryDeletedEvent.DeliveryDeletedEventBuilder.class)
+@Builder(builderClassName = "DeliveryDeletedEventBuilder", toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DroneStatusChangedEvent {
+public class DeliveryDeletedEvent {
 
     private String eventId;
 
-    private String droneId;
-
     private LocalDateTime eventDateTime;
 
-    private String nickName;
+    private Long deliveryId;
 
-    private String droneStatus;
+    private Long trackingNumber;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class DroneStatusChangedEventBuilder {
+    public static class DeliveryDeletedEventBuilder {
     }
+
 }
+

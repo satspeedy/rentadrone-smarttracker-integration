@@ -5,13 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @JsonDeserialize(builder = DeliveryStartTimeReachedEvent.DeliveryStartTimeReachedEventBuilder.class)
 @Builder(builderClassName = "DeliveryStartTimeReachedEventBuilder", toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -22,7 +20,7 @@ public class DeliveryStartTimeReachedEvent {
 
     private LocalDateTime eventDateTime;
 
-    private Long deliveryId;
+    private String deliveryId;
 
     private String startAddress;
 
@@ -42,13 +40,15 @@ public class DeliveryStartTimeReachedEvent {
 
     private String deliveryStatus;
 
-    private Long droneId;
+    private String droneId;
 
     private String droneNickName;
 
-    private Long userId;
+    private String userId;
 
     private String userName;
+
+    private String trackingNumber;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class DeliveryStartTimeReachedEventBuilder {

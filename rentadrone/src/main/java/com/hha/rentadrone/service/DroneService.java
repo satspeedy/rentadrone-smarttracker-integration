@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.hha.rentadrone.config.KafkaTopicNames.DRONE_CHANGED_TOPIC;
-import static com.hha.rentadrone.config.KafkaTopicNames.DRONE_DELETED_TOPIC;
+import static com.hha.rentadrone.config.TopicNames.DRONE_CHANGED_TOPIC;
+import static com.hha.rentadrone.config.TopicNames.DRONE_DELETED_TOPIC;
 
 @Slf4j
 @Service

@@ -1,6 +1,7 @@
 package com.hha.rentadrone.config;
 
 import com.hha.rentadrone.messaging.event.DeliveryChangedEvent;
+import com.hha.rentadrone.messaging.event.DeliveryDeletedEvent;
 import com.hha.rentadrone.messaging.event.DroneChangedEvent;
 import com.hha.rentadrone.messaging.event.DroneStatusChangedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -115,6 +116,26 @@ class KafkaConsumerConfig {
         JsonDeserializer<DeliveryChangedEvent> deliveryChangedEventJsonDeserializer = new JsonDeserializer<>(DeliveryChangedEvent.class, false);
         deliveryChangedEventJsonDeserializer.addTrustedPackages("*");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deliveryChangedEventJsonDeserializer);
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, DeliveryDeletedEvent>> deliveryDeletedEventKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, DeliveryDeletedEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(deliveryDeletedEventConsumerFactory());
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(1000L, 2L)));
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, DeliveryDeletedEvent> deliveryDeletedEventConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+        JsonDeserializer<DeliveryDeletedEvent> deliveryDeletedEventJsonDeserializer = new JsonDeserializer<>(DeliveryDeletedEvent.class, false);
+        deliveryDeletedEventJsonDeserializer.addTrustedPackages("*");
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deliveryDeletedEventJsonDeserializer);
     }
 
 }

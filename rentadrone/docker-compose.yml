@@ -1,5 +1,9 @@
 version: '3.8'
 
+#networks:
+#  dapr-network:
+#    external: true
+
 services:
 
   app:
@@ -10,6 +14,8 @@ services:
     depends_on:
       - db
       - broker
+#    networks:
+#      - dapr-network
     environment:
       # Exceptionally the internal port 5432 is passed as env param because docker compose uses the internal port to interact. From outside the port 25432 is used.
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/rentadrone-db
@@ -20,6 +26,22 @@ services:
       - TZ=Europe/Berlin
     ports:
       - '8181:8181'
+
+  app-dapr:
+    image: "daprio/daprd:latest"
+    container_name: 'rentadrone-app-dapr'
+    command: [ "./daprd",
+               "-app-id", "rentadrone-app-id",
+               "-app-port", "8181",
+               "-components-path", "/components",
+               "-placement-host-address", "host.docker.internal:6050",
+               "-config","../dapr/config/advanced-config.yaml"]
+    volumes:
+      - "../dapr/components/:/components"
+    depends_on:
+    - app
+    - broker
+    network_mode: "service:app"
 
   db:
     image: 'postgres:13.1-alpine'

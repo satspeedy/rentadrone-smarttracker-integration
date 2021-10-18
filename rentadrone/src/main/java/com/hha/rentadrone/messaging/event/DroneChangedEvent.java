@@ -5,13 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @JsonDeserialize(builder = DroneChangedEvent.DroneChangedEventBuilder.class)
 @Builder(builderClassName = "DroneChangedEventBuilder", toBuilder = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

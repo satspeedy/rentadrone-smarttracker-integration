@@ -1,8 +1,8 @@
 package com.hha.rentadrone.config;
 
-public class KafkaTopicNames {
+public class TopicNames {
 
-    private KafkaTopicNames() {
+    private TopicNames() {
     }
 
     public static final String DRONE_CHANGED_TOPIC = "drone-changed";
@@ -14,4 +14,7 @@ public class KafkaTopicNames {
     public static final String DELIVERY_DELETED_TOPIC = "delivery-deleted";
 
     public static final String DELIVERY_START_TIME_REACHED = "delivery-start-time-reached";
+
+    public static final String TESTING_TOPIC = "testingtopic";
+
 }

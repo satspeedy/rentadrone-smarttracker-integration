@@ -1,9 +1,10 @@
 package com.hha.rentadrone.messaging;
 
-import com.hha.rentadrone.config.KafkaTopicNames;
+import com.hha.rentadrone.config.TopicNames;
 import com.hha.rentadrone.domain.Drone;
 import com.hha.rentadrone.domain.enumeration.DroneStatus;
 import com.hha.rentadrone.messaging.event.DeliveryChangedEvent;
+import com.hha.rentadrone.messaging.event.DeliveryDeletedEvent;
 import com.hha.rentadrone.messaging.event.DroneChangedEvent;
 import com.hha.rentadrone.messaging.event.DroneStatusChangedEvent;
 import com.hha.rentadrone.service.DeliveryService;
@@ -29,14 +30,15 @@ public class KafkaListeners {
         this.deliveryService = deliveryService;
     }
 
-    @KafkaListener(topics = KafkaTopicNames.DRONE_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "droneChangedEventKafkaListenerContainerFactory")
+    @KafkaListener(topics = TopicNames.DRONE_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "droneChangedEventKafkaListenerContainerFactory")
     public void listenDroneChangedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload DroneChangedEvent payload) {
-        logConsumedMessage(KafkaTopicNames.DRONE_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
+        logConsumedMessage(TopicNames.DRONE_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
     }
 
-    @KafkaListener(topics = KafkaTopicNames.DRONE_STATUS_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "droneStatusChangedEventKafkaListenerContainerFactory")
+    // Comment out to consume only via Dapr - testimonial.
+//    @KafkaListener(topics = TopicNames.DRONE_STATUS_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "droneStatusChangedEventKafkaListenerContainerFactory")
     public void listenDroneStatusChangedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload DroneStatusChangedEvent payload) {
-        logConsumedMessage(KafkaTopicNames.DRONE_STATUS_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
+        logConsumedMessage(TopicNames.DRONE_STATUS_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
         Drone drone = mapTo(payload);
         droneService.partialUpdate(drone);
         deliveryService.updateDeliveryStatusByDroneStatus(drone.getId(), drone.getDroneStatus(), payload.getEventDateTime());
@@ -49,19 +51,19 @@ public class KafkaListeners {
         return drone;
     }
 
-    @KafkaListener(topics = KafkaTopicNames.DRONE_DELETED_TOPIC, groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = TopicNames.DRONE_DELETED_TOPIC, groupId = "${spring.kafka.consumer.group-id}")
     public void listenDroneDeletedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload String payload) {
-        logConsumedMessage(KafkaTopicNames.DRONE_DELETED_TOPIC, key, StringifyHelper.toJson(payload));
+        logConsumedMessage(TopicNames.DRONE_DELETED_TOPIC, key, StringifyHelper.toJson(payload));
     }
 
-    @KafkaListener(topics = KafkaTopicNames.DELIVERY_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "deliveryChangedEventKafkaListenerContainerFactory")
+    @KafkaListener(topics = TopicNames.DELIVERY_CHANGED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "deliveryChangedEventKafkaListenerContainerFactory")
     public void listenDeliveryChangedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload DeliveryChangedEvent payload) {
-        logConsumedMessage(KafkaTopicNames.DELIVERY_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
+        logConsumedMessage(TopicNames.DELIVERY_CHANGED_TOPIC, key, StringifyHelper.toJson(payload));
     }
 
-    @KafkaListener(topics = KafkaTopicNames.DELIVERY_DELETED_TOPIC, groupId = "${spring.kafka.consumer.group-id}")
-    public void listenDeliveryDeletedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload String payload) {
-        logConsumedMessage(KafkaTopicNames.DELIVERY_DELETED_TOPIC, key, StringifyHelper.toJson(payload));
+    @KafkaListener(topics = TopicNames.DELIVERY_DELETED_TOPIC, groupId = "${spring.kafka.consumer.group-id}", containerFactory = "deliveryDeletedEventKafkaListenerContainerFactory")
+    public void listenDeliveryDeletedTopic(@Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key, @Payload DeliveryDeletedEvent payload) {
+        logConsumedMessage(TopicNames.DELIVERY_DELETED_TOPIC, key, StringifyHelper.toJson(payload));
     }
 
     private void logConsumedMessage(String topicName, String key, String message) {

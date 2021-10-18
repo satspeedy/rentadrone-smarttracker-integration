@@ -1,6 +1,7 @@
 package com.hha.rentadrone.config;
 
 import com.hha.rentadrone.messaging.event.DeliveryChangedEvent;
+import com.hha.rentadrone.messaging.event.DeliveryDeletedEvent;
 import com.hha.rentadrone.messaging.event.DeliveryStartTimeReachedEvent;
 import com.hha.rentadrone.messaging.event.DroneChangedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,17 @@ class KafkaProducerConfig {
 
     @Bean
     public KafkaTemplate<String, DeliveryStartTimeReachedEvent> deliveryStartTimeReachedEventKafkaTemplate(ProducerFactory<String, DeliveryStartTimeReachedEvent> producerFactory) {
+        return new KafkaTemplate<>(producerFactory,
+                Collections.singletonMap(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class));
+    }
+
+    @Bean
+    public ProducerFactory<String, DeliveryDeletedEvent> deliveryDeletedEventProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public KafkaTemplate<String, DeliveryDeletedEvent> deliveryDeletedEventKafkaTemplate(ProducerFactory<String, DeliveryDeletedEvent> producerFactory) {
         return new KafkaTemplate<>(producerFactory,
                 Collections.singletonMap(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class));
     }
