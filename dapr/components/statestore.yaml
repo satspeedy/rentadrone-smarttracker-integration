@@ -8,7 +8,9 @@ spec:
   version: v1
   metadata:
   - name: redisHost
-    value: localhost:6379
+    secretKeyRef:
+      name: statestore.urlBrokerHostMachine
+      key: statestore.urlBrokerHostMachine
   - name: redisPassword
     secretKeyRef:
       name: statestore.redisPassword

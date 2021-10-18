@@ -10,7 +10,9 @@ spec:
   - name: consumerID
     value: "dronesim-app-id"
   - name: url
-    value: "tcp://192.168.178.83:1883"
+    secretKeyRef:
+      name: binding.urlGuestMachine
+      key: binding.urlGuestMachine
   - name: topic
     value: "trackingPositionChangedTopic"
   - name: qos
@@ -19,6 +21,7 @@ spec:
     value: "false"
   - name: cleanSession
     value: "false"
+auth:
+  secretStore: secret-store-local-file
 scopes:
   - dronesim-app-id
-  - smarttracker-app-id

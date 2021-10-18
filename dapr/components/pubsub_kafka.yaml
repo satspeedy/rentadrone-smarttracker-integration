@@ -8,7 +8,9 @@ spec:
   version: v1
   metadata:
     - name: brokers
-      value: "localhost:9092"
+      secretKeyRef:
+        name: pubsub-kafka.urlBrokerHostMachine
+        key: pubsub-kafka.urlBrokerHostMachine
 #    - name: consumerGroup # Optional. Used for input bindings.
 #      value: "rentADroneGroupViaDapr"
 #    - name: clientID # Optional. Used as client tracing ID by Kafka brokers.
@@ -17,6 +19,8 @@ spec:
       value: "true"
     - name: authRequired
       value: "false"
+auth:
+  secretStore: secret-store-local-file
 scopes:
   - rentadrone-app-id
   - smarttracker-app-id

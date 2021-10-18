@@ -8,7 +8,9 @@ spec:
   version: v1
   metadata:
   - name: redisHost
-    value: localhost:6379
+    secretKeyRef:
+      name: pubsub.urlBrokerHostMachine
+      key: pubsub.urlBrokerHostMachine
   - name: redisPassword
     secretKeyRef:
       name: pubsub.redisPassword
