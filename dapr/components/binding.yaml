@@ -1,0 +1,24 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: tracking-position-changed-event
+  namespace: default
+spec:
+  type: bindings.mqtt
+  version: v1
+  metadata:
+  - name: consumerID
+    value: "dronesim-app-id"
+  - name: url
+    value: "tcp://192.168.178.83:1883"
+  - name: topic
+    value: "trackingPositionChangedTopic"
+  - name: qos
+    value: 1
+  - name: retain
+    value: "false"
+  - name: cleanSession
+    value: "false"
+scopes:
+  - dronesim-app-id
+  - smarttracker-app-id

@@ -1,0 +1,24 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: statestore
+  namespace: default
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: localhost:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: statestore.redisPassword
+      key: statestore.redisPassword
+  - name: actorStateStore
+    value: "true"
+  - name: keyPrefix
+    value: none
+auth:
+  secretStore: secret-store-local-file
+scopes:
+  - rentadrone-app-id
+  - smarttracker-app-id

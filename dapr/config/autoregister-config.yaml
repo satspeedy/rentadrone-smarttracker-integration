@@ -1,0 +1,36 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: daprConfig
+spec:
+  nameResolution:
+    component: "consul"
+    configuration:
+      client:
+        address: "127.0.0.1:8500"
+      selfRegister: true
+      checks:
+        - name: "Dapr Health Status"
+          checkID: "daprHealth:${APP_ID}"
+          interval: "15s"
+          http: "http://${HOST_ADDRESS}:${DAPR_HTTP_PORT}/v1.0/healthz"
+        - name: "Service Health Status"
+          checkID: "serviceHealth:${APP_ID}"
+          interval: "15s"
+          http: "http://${HOST_ADDRESS}:${APP_PORT}/actuator/health"
+      tags:
+        - "dapr"
+        - "v1"
+        - "${APP_ID}"
+        - "${APP_PORT}"
+      meta:
+        DAPR_METRICS_PORT: "${DAPR_METRICS_PORT}"
+        DAPR_PROFILE_PORT: "${DAPR_PROFILE_PORT}"
+      daprPortMetaKey: "DAPR_PORT"
+      queryOptions:
+        useCache: true
+        filter: "Checks.ServiceTags contains dapr"
+  tracing:
+    samplingRate: "1"
+    zipkin:
+      endpointAddress: http://localhost:9411/api/v2/spans

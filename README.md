@@ -1,2 +1,181 @@
 # rentadrone-smarttracker-integration
 Integration of Rent A Drone (Drone Rental System) and SmartTracker (Live-Tracking System)
+
+## Goal
+Project work for obtaining the academic degree Master of Science (M.Sc.) in the part-time study program Business Information Systems.
+
+Title of the project work: **Practical introduction to Distributed Application Runtime and Service Mesh for architecture integration**
+
+Two independent systems are being developed. Use cases that span both systems are realized with the help of Dapr and Consul. Consequently, both system architectures are integrated with each other.
+
+Author https://github.com/satspeedy
+
+## Setup
+- Clone git repo.
+- Install consul according to product website
+  - see https://www.consul.io/docs/install#install-consul
+- Install dapr according to product website
+  - see https://docs.dapr.io/getting-started/install-dapr-cli/
+- Configure Dapr
+  - Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml`
+    - Windows: `%USERPROFILE%\.dapr\`
+    - Linux: `$HOME/.dapr`
+  - Add local secret store file
+    - see [dapr/how-to-add-local-secret-store-file.md](dapr/how-to-add-local-secret-store-file.md)
+- Set required environment variables
+>**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service.**
+```bash
+# Linux
+export AZURE_CLIENT_ID="<YOUR AZURE_CLIENT_ID>"
+export AZURE_CLIENT_SECRET="<YOUR AZURE_CLIENT_SECRET>"
+export AZURE_TENANT_ID="<YOUR AZURE_TENANT_ID>"
+export AZURE_VAULT_URL="<YOUR AZURE_VAULT_URL>"
+export GOOGLE_API_KEY="<YOUR GOOGLE_API_KEY>"
+
+# Windows
+setx AZURE_CLIENT_ID "<YOUR AZURE_CLIENT_ID>"
+setx AZURE_CLIENT_SECRET "<YOUR AZURE_CLIENT_SECRET>"
+setx AZURE_TENANT_ID "<YOUR AZURE_TENANT_ID>"
+setx AZURE_VAULT_URL "<YOUR AZURE_VAULT_URL>"
+setx GOOGLE_API_KEY "<YOUR GOOGLE_API_KEY>"
+```
+
+## Start-up
+
+### Start consul agent on host machine
+- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
+- Set host ip address as value for "bind" attribute in command below
+```shell
+consul agent \
+-server \
+-bootstrap-expect=1 \
+-bind=<HOST_IP_ADDRESS> \
+-ui \
+-data-dir=consul/data \
+-config-dir=consul/config \
+-dev
+```
+
+#### or reload when agent already running and configuration is changed
+```shell
+consul reload
+---
+or start in simple dev mode: 
+consul agent -dev -enable-script-checks -config-dir=consul/config
+```
+
+### Start consul agent on guest machine - Only if one of the projects is running on a second machine
+- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.83
+- Set host ip address as value for "bind" attribute in command below
+```shell
+consul agent \
+-bind=<GUEST_IP_ADDRESS> \
+-ui \
+-enable-script-checks=true \
+-data-dir=consul/data \
+-config-dir=consul/config
+```
+
+### Join consul agent on host machine server - Only if one of the projects is running on a second machine
+- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.83
+- Set host ip address as value for "bind" attribute in command below
+```shell
+consul join <HOST_IP_ADDRESS>
+```
+
+### Check consul members for both nodes - Only if one of the projects is running on a second machine
+```shell
+# should display 2 nodes
+consul members 
+``` 
+
+### Update current host ip address in rentadrone project `docker-compose.infra.yml` file 
+- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
+- Set host ip address as value for entry "KAFKA_ADVERTISED_LISTENERS" with key "LISTENER_EXT"
+
+### Update current guest ip address in dronesim project `binding.yaml` file
+- Determine host ip address. E.g., with ipconfig/ifconfig. like  192.168.178.83
+- Set host ip address as value for metadata entry "url" like "tcp://<GUEST_IP_ADDRESS>:1883"
+
+### Build projects
+- in _rentadrone_, _smarttracker_ and _dronesim_ project folder
+```shell
+mvn clean package
+```
+
+### Start Infra, Dapr and Services in each project folder
+- in _rentadrone_ project folder
+```shell
+# start infrastructure
+docker compose -f deploy-compose/docker-compose.infra.yml
+
+# register service in consul
+consul services register -id=rentadrone-app-id
+# to deregister: consul services deregister -id=rentadrone-app-id
+
+# add consul service mesh sidecar envoy
+consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
+# replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
+# change admin address "port_value" to 19001
+
+# start envoy with bootstraped config
+- envoy -c ../consul/envoy/rentadrone-bootstrap.json
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
+
+# start service
+mvn -q spring-boot:run
+```
+- in _smarttracker_ project folder
+```shell
+# start infrastructure
+docker compose -f deploy-compose/docker-compose.infra.yml
+
+# register service in consul
+consul services register -id=smarttracker-app-id
+# to deregister: consul services deregister -id=smarttracker-app-id
+
+# add consul service mesh sidecar envoy
+consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
+# replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
+# change admin address "port_value" to 19003
+
+# start envoy with bootstraped config
+- envoy -c ../consul/envoy/smarttracker-bootstrap.json
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+
+# start service
+mvn -q spring-boot:run
+```
+- in _dronesim_ project folder
+```shell
+# register service in consul
+consul services register -id=dronesim-app-id
+# to deregister: consul services deregister -id=dronesim-app-id
+
+# add consul service mesh sidecar envoy
+consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
+# replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
+# change admin address "port_value" to 19002
+
+# start envoy with bootstraped config
+- envoy -c ../consul/envoy/dronesim-bootstrap.json
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+
+# start service
+mvn -q spring-boot:run
+```
+
+### Test an example delivery with postman
+- in _rentadrone_ project folder 
+  - import `rent-a-drone.postman_collection.json` collection in postman and call _Create a new delivery_
+- call respond url and pass your defined pin as query param `pin`
+```shell
+curl -X 'GET' 'http://...?pin=<YOUR_PIN>' -H 'accept: application/json' | jq
+```
+- Repeat the call after 2 minutes to see the currently attached coordinates in the payload

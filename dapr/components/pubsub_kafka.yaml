@@ -1,0 +1,22 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub-kafka-rentadrone
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+    - name: brokers
+      value: "localhost:9092"
+#    - name: consumerGroup # Optional. Used for input bindings.
+#      value: "rentADroneGroupViaDapr"
+#    - name: clientID # Optional. Used as client tracing ID by Kafka brokers.
+#      value: "rentadrone-app-id"
+    - name: rawPayload
+      value: "true"
+    - name: authRequired
+      value: "false"
+scopes:
+  - rentadrone-app-id
+  - smarttracker-app-id
