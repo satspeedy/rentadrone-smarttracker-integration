@@ -36,5 +36,7 @@ build/
 /dapr/secrets.json
 
 ### Consul custom local data directory ###
-/consul/data
-/consul/envoy
+/consul/data/**
+!consul/data/.gitkeep
+/consul/envoy/**
+!consul/envoy/.gitkeep
