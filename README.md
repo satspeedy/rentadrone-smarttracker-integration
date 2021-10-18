@@ -80,10 +80,11 @@ consul agent \
 ```
 
 ### Join consul agent on host machine server - Only if one of the projects is running on a second machine
-- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.83
+- Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
 - Set host ip address as value for "bind" attribute in command below
 ```shell
 consul join <HOST_IP_ADDRESS>
+# consul leave to leave gracefully
 ```
 
 ### Check consul members for both nodes - Only if one of the projects is running on a second machine

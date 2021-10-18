@@ -9,7 +9,7 @@ Steps in _project folder_:
 
 - Setup infrastructure
 ```bash
-docker compose -f deploy-compose/docker-compose.kafka.yml up -d
+docker compose -f deploy-compose/docker-compose.infra.yml up -d
 ```
 - Create the database pod
 ```bash
@@ -35,7 +35,7 @@ curl -X 'GET' 'http://localhost:<MINIKUBE PORT>/api/drones' -H 'accept: applicat
 ```bash
 kubectl delete -f deploy-k8s/app.yaml
 kubectl delete -f deploy-k8s/db.yaml
-docker compose -f deploy-compose/docker-compose.kafka.yml down --remove-orphans
+docker compose -f deploy-compose/docker-compose.infra.yml down --remove-orphans
 ```
 
 ## Quickstart with docker-compose
@@ -55,7 +55,7 @@ Steps in _project folder_:
 
 - Setup Kafka Broker
 ```bash
-docker compose -f deploy-compose/docker-compose.kafka.yml up -d
+docker compose -f deploy-compose/docker-compose.infra.yml up -d
 ```
 - Create the database container
 ```bash
@@ -92,7 +92,7 @@ docker run \
 - Stop project
 ```bash
 docker rm -f rentadrone-app rentadrone-db
-docker compose -f deploy-compose/docker-compose.kafka.yml down --remove-orphans
+docker compose -f deploy-compose/docker-compose.infra.yml down --remove-orphans
 ```
 
 ## API Documentation
