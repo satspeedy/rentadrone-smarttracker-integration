@@ -35,7 +35,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      # For more details see See https://rmoff.net/2018/08/02/kafka-listeners-explained/
+      # For more details see https://rmoff.net/2018/08/02/kafka-listeners-explained/
       KAFKA_LISTENERS: LISTENER_DOCKER://broker:29092,LISTENER_HOST://broker:9092,LISTENER_EXT://broker:29094
       KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER://broker:29092,LISTENER_HOST://localhost:9092,LISTENER_EXT://192.168.178.31:29094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER:PLAINTEXT,LISTENER_HOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT
