@@ -174,7 +174,7 @@ consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/env
 # change admin address "port_value" to 19003
 
 # start envoy with bootstraped config
-- envoy -c ../consul/envoy/smarttracker-bootstrap.json
+envoy -c ../consul/envoy/smarttracker-bootstrap.json
 
 # start dapr sidecar with ctrl+c
 
