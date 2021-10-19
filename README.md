@@ -104,7 +104,9 @@ consul members
 - Determine ip addresses and update `secrets.json`. E.g., with ipconfig/ifconfig. like  192.168.178.83
 
 ### Build projects
-- in _rentadrone_, _smarttracker_ and _dronesim_ project folder
+- in _rentadrone_ project folder
+- in _smarttracker_ project folder
+- in _dronesim_ project folder
 ```shell
 mvn clean package
 ```
