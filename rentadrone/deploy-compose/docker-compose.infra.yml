@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: 'rentadrone-db'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=rentadrone-db
+      - TZ=Europe/Berlin
+    ports:
+      - '25432:5432'
+
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.0
     hostname: zookeeper
