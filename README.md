@@ -29,19 +29,14 @@ Author https://github.com/satspeedy
 >**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service.**
 ```bash
 # Linux
-
-## Open the current user’s profile into a text editor
-vi ~/.bash_profile
-
-## Add the export command for every environment variable and save file
+## Open the current user’s .bashrc file
+vi ~/.bashrc
+## Add the export command for every environment variable and save
 export AZURE_CLIENT_ID="<YOUR AZURE_CLIENT_ID>"
 export AZURE_CLIENT_SECRET="<YOUR AZURE_CLIENT_SECRET>"
 export AZURE_TENANT_ID="<YOUR AZURE_TENANT_ID>"
 export AZURE_VAULT_URL="<YOUR AZURE_VAULT_URL>"
 export GOOGLE_API_KEY="<YOUR GOOGLE_API_KEY>"
-
-## Apply changes immediately
-source ~/.bash_profile
 
 # Windows
 setx AZURE_CLIENT_ID "<YOUR AZURE_CLIENT_ID>"
