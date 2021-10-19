@@ -141,7 +141,7 @@ consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy
 # change admin address "port_value" to 19001
 
 # start envoy with bootstraped config
-- envoy -c ../consul/envoy/rentadrone-bootstrap.json
+envoy -c ../consul/envoy/rentadrone-bootstrap.json
 
 # start dapr sidecar with ctrl+c
 ```
@@ -205,7 +205,7 @@ consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/d
 # change admin address "port_value" to 19002
 
 # start envoy with bootstraped config
-- envoy -c ../consul/envoy/dronesim-bootstrap.json
+envoy -c ../consul/envoy/dronesim-bootstrap.json
 
 # start dapr sidecar with ctrl+c
 ```
