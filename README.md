@@ -148,7 +148,7 @@ consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy
 # start envoy with bootstraped config
 envoy -c ../consul/envoy/rentadrone-bootstrap.json
 
-# start dapr sidecar with ctrl+c
+# stop dapr sidecar with ctrl+c
 ```
 - in _smarttracker_ project folder
 ```shell
@@ -183,8 +183,7 @@ consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/env
 # start envoy with bootstraped config
 envoy -c ../consul/envoy/smarttracker-bootstrap.json
 
-# start dapr sidecar with ctrl+c
-
+# stop dapr sidecar with ctrl+c
 ```
 - in _dronesim_ project folder
 ```shell
@@ -216,7 +215,7 @@ consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/d
 # start envoy with bootstraped config
 envoy -c ../consul/envoy/dronesim-bootstrap.json
 
-# start dapr sidecar with ctrl+c
+# stop dapr sidecar with ctrl+c
 ```
 
 ### Test an example delivery with postman
