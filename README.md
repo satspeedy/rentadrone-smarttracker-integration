@@ -26,7 +26,7 @@ Author https://github.com/satspeedy
   - Add local secret store file
     - see [dapr/how-to-add-local-secret-store-file.md](dapr/how-to-add-local-secret-store-file.md)
 - Set required environment variables
->**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service.**
+>**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service (see below for individule ports).**
 ```bash
 # Linux
 ## Open the current user’s .bashrc file
@@ -124,6 +124,14 @@ consul services register -name=rentadrone-app-id
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
 
+# set defined dapr ports as environment variable (even in your IDE as mentioned above)
+## Linux 
+export DAPR_HTTP_PORT=3081
+export DAPR_GRPC_PORT=52081
+## Windows
+setx DAPR_HTTP_PORT "3081"
+setx DAPR_GRPC_PORT "52081"
+
 # start service
 mvn -q spring-boot:run
 
@@ -149,6 +157,14 @@ consul services register -name=smarttracker-app-id
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
 
+# set defined dapr ports as environment variable (even in your IDE as mentioned above)
+## Linux 
+export DAPR_HTTP_PORT=3083
+export DAPR_GRPC_PORT=52083
+## Windows
+setx DAPR_HTTP_PORT "3083"
+setx DAPR_GRPC_PORT "52083"
+
 # start service
 mvn -q spring-boot:run
 
@@ -171,6 +187,14 @@ consul services register -name=dronesim-app-id
 
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+
+# set defined dapr ports as environment variable (even in your IDE as mentioned above)
+## Linux 
+export DAPR_HTTP_PORT=3082
+export DAPR_GRPC_PORT=52082
+## Windows
+setx DAPR_HTTP_PORT "3082"
+setx DAPR_GRPC_PORT "52082"
 
 # start service
 mvn -q spring-boot:run
