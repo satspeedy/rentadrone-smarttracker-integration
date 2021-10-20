@@ -58,11 +58,11 @@ setx GOOGLE_API_KEY "<YOUR GOOGLE_API_KEY>"
 consul agent \
 -server \
 -bootstrap-expect=1 \
--bind=<HOST_IP_ADDRESS> \
 -ui \
 -data-dir=consul/data \
 -config-dir=consul/config \
--dev
+-dev \
+-bind=<HOST_IP_ADDRESS>
 ```
 
 #### or reload when agent already running and configuration is changed
@@ -78,11 +78,11 @@ consul agent -dev -enable-script-checks -config-dir=consul/config
 - Set host ip address as value for "bind" attribute in command below
 ```shell
 consul agent \
--bind=<GUEST_IP_ADDRESS> \
 -ui \
 -enable-script-checks=true \
 -data-dir=consul/data \
--config-dir=consul/config
+-config-dir=consul/config \
+-bind=<GUEST_IP_ADDRESS>
 ```
 
 ### Join consul agent on host machine server - Only if one of the projects is running on a second machine
