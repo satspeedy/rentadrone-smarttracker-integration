@@ -136,6 +136,9 @@ mvn clean package
 ### Start Infra, Dapr and Services in each project folder
 - in _rentadrone_ project folder
 ```shell
+# switch to rentadrone project folder
+cd rentadrone
+
 # start infrastructure
 docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 
@@ -171,6 +174,9 @@ envoy -c ../consul/envoy/rentadrone-bootstrap.json
 ```
 - in _smarttracker_ project folder
 ```shell
+# switch to smarttracker project folder
+cd smarttracker
+
 # start infrastructure
 docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 
@@ -206,6 +212,9 @@ envoy -c ../consul/envoy/smarttracker-bootstrap.json
 ```
 - in _dronesim_ project folder
 ```shell
+# switch to dronesim project folder
+cd dronesim
+
 # register service in consul
 consul services register -name=dronesim-app-id
 # to deregister: consul services deregister -id=dronesim-app-id
