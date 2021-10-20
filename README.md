@@ -149,6 +149,8 @@ consul services register -name=rentadrone-app-id
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
 
+cd rentadrone
+
 # set defined dapr ports as environment variable (even in your IDE as mentioned above)
 ## Linux 
 export DAPR_HTTP_PORT=3081
@@ -159,6 +161,8 @@ setx DAPR_GRPC_PORT "52081"
 
 # start service
 mvn -q spring-boot:run
+
+cd rentadrone
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
@@ -172,6 +176,47 @@ envoy -c ../consul/envoy/rentadrone-bootstrap.json
 
 # stop dapr sidecar with ctrl+c
 ```
+
+- in _dronesim_ project folder
+```shell
+# switch to dronesim project folder
+cd dronesim
+
+# register service in consul
+consul services register -name=dronesim-app-id
+# to deregister: consul services deregister -id=dronesim-app-id
+
+# start dapr sidecar (updates also consul service)
+dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+
+cd dronesim
+
+# set defined dapr ports as environment variable (even in your IDE as mentioned above)
+## Linux 
+export DAPR_HTTP_PORT=3082
+export DAPR_GRPC_PORT=52082
+## Windows
+setx DAPR_HTTP_PORT "3082"
+setx DAPR_GRPC_PORT "52082"
+
+# start service
+mvn -q spring-boot:run
+
+cd dronesim
+
+# add consul service mesh sidecar envoy
+consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
+
+# on windows: replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
+
+# change admin address "port_value" to 19002
+
+# start envoy with bootstraped config
+envoy -c ../consul/envoy/dronesim-bootstrap.json
+
+# stop dapr sidecar with ctrl+c
+```
+
 - in _smarttracker_ project folder
 ```shell
 # switch to smarttracker project folder
@@ -187,6 +232,8 @@ consul services register -name=smarttracker-app-id
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
 
+cd smarttracker
+
 # set defined dapr ports as environment variable (even in your IDE as mentioned above)
 ## Linux 
 export DAPR_HTTP_PORT=3083
@@ -198,6 +245,8 @@ setx DAPR_GRPC_PORT "52083"
 # start service
 mvn -q spring-boot:run
 
+cd smarttracker 
+
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
 
@@ -207,41 +256,6 @@ consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/env
 
 # start envoy with bootstraped config
 envoy -c ../consul/envoy/smarttracker-bootstrap.json
-
-# stop dapr sidecar with ctrl+c
-```
-- in _dronesim_ project folder
-```shell
-# switch to dronesim project folder
-cd dronesim
-
-# register service in consul
-consul services register -name=dronesim-app-id
-# to deregister: consul services deregister -id=dronesim-app-id
-
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
-
-# set defined dapr ports as environment variable (even in your IDE as mentioned above)
-## Linux 
-export DAPR_HTTP_PORT=3082
-export DAPR_GRPC_PORT=52082
-## Windows
-setx DAPR_HTTP_PORT "3082"
-setx DAPR_GRPC_PORT "52082"
-
-# start service
-mvn -q spring-boot:run
-
-# add consul service mesh sidecar envoy
-consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
-
-# on windows: replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
-
-# change admin address "port_value" to 19002
-
-# start envoy with bootstraped config
-envoy -c ../consul/envoy/dronesim-bootstrap.json
 
 # stop dapr sidecar with ctrl+c
 ```
