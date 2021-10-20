@@ -10,6 +10,25 @@ Two independent systems are being developed. Use cases that span both systems ar
 
 Author https://github.com/satspeedy
 
+## Services
+| Service      | Operates on   | App Port | Dapr sidecar HTTP port | Dapr sidecar gRPC port |
+| -------------| ------------- | -------- | ---------------------- | ---------------------- |
+| RentADrone   | Host Machine  | 8181     | 3081                   | 52081                  |
+| DroneSim     | Host Machine  | 8282     | 3082                   | 52082                  |
+| SmartTracker | Guest Machine | 8383     | 3083                   | 52083                  |
+
+## Components
+
+| Type         | Component                     | Part of      | Operates on   | Host port | Docker port | Ext port  |
+| ------------ | ------------------------------| -------------| ------------- | --------- | ----------- |---------- |
+| PubSub       | Kafka                         | RentADrone   | Host Machine  | 9092      | 29092       | 29094     |
+| DB           | PostgreSQL                    | RentADrone   | Host Machine  | 25432     | 5432        | -         |
+| StateStore   | Redis                         | SmartTracker | Guest Machine | 26379     | 6379        | 26379     |
+| Binding      | Eclipse Mosquitto MQTT Broker | SmartTracker | Guest Machine | 1883      | 1883        | 1883      |
+| StateStore   | Redis (Provided by Dapr)      | Shared       | Host Machine  | 6379      | -           | 6379      |
+| SecretStore  | Azure Key Vault               | Shared       | Azure         | -         | -           | -         |
+| SecretStore  | Local file                    | -            | Host & Guest  | -         | -           | -         |
+
 ## Setup
 - Clone git repo.
 - Install consul according to product website
