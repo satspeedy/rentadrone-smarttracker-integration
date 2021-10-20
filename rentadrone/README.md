@@ -1,6 +1,8 @@
 # rentadrone
 Rent A Drone - Drone Rental System
 
+Start with [main README.md](../README.md)
+
 ## Quickstart with minikube
 
 - Download and start a minikube cluster
