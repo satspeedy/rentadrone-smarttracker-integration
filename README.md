@@ -167,7 +167,7 @@ cd rentadrone
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
 
-# on windows: replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
+# replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
 
 # change admin address "port_value" to 19001
 
@@ -207,7 +207,7 @@ cd dronesim
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
 
-# on windows: replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
+# replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
 
 # change admin address "port_value" to 19002
 
@@ -250,7 +250,7 @@ cd smarttracker
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
 
-# on windows: replace "access_log_path" on windows with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
+# replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
 
 # change admin address "port_value" to 19003
 
