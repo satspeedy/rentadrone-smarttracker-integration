@@ -8,7 +8,7 @@ Title of the project work: **Practical introduction to Distributed Application R
 
 Two independent systems are being developed. Use cases that span both systems are realized with the help of Dapr and Consul. Consequently, both system architectures are integrated with each other.
 
-Author https://github.com/satspeedy
+Contact: https://github.com/satspeedy
 
 ## Services
 | Service      | Operates on   | App Port | Dapr sidecar HTTP port | Dapr sidecar gRPC port |
@@ -48,7 +48,7 @@ Author https://github.com/satspeedy
   - Add local secret store file
     - see [dapr/how-to-add-local-secret-store-file.md](dapr/how-to-add-local-secret-store-file.md)
 - Set required environment variables
->**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service (see below for individule ports).**
+>**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service (see below for individual ports).**
 ```bash
 # Linux
 ## Open the current user’s .bashrc file
@@ -166,17 +166,16 @@ mvn -q spring-boot:run
 cd rentadrone
 
 # add consul service mesh sidecar envoy
+## Linux
+consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001
+## Windows
 consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001 -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for rentadrone-app-id -admin-bind localhost:19001
 
+## Following steps are only necessary on Windows: 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
 
-# change admin address "port_value" to 19001
-
-# start envoy with bootstraped config
+# start envoy with bootstrapped config
 envoy -c ../consul/envoy/rentadrone-bootstrap.json
-
-# stop dapr sidecar with ctrl+c
 ```
 
 - in _dronesim_ project folder
@@ -207,17 +206,16 @@ mvn -q spring-boot:run
 cd dronesim
 
 # add consul service mesh sidecar envoy
+## Linux
+consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002
+## Windows
 consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002 -bootstrap > ../consul/envoy/dronesim-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for dronesim-app-id -admin-bind localhost:19002
 
+## Following steps are only necessary on Windows:  
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
 
-# change admin address "port_value" to 19002
-
-# start envoy with bootstraped config
+# start envoy with bootstrapped config
 envoy -c ../consul/envoy/dronesim-bootstrap.json
-
-# stop dapr sidecar with ctrl+c
 ```
 
 - in _smarttracker_ project folder
@@ -251,27 +249,26 @@ mvn -q spring-boot:run
 cd smarttracker 
 
 # add consul service mesh sidecar envoy
+## Linux
+consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003
+## Windows
 consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003 -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for smarttracker-app-id -admin-bind localhost:19003
 
+## Following steps are only necessary on Windows:
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
 
-# change admin address "port_value" to 19003
-
-# start envoy with bootstraped config
+# start envoy with bootstrapped config
 envoy -c ../consul/envoy/smarttracker-bootstrap.json
-
-# stop dapr sidecar with ctrl+c
 ```
 
-### Test an example delivery with postman
+### Test an example request via RentADrone Dapr Sidecar to SmartTracker with postman
 - in _rentadrone_ project folder 
   - import `rent-a-drone.postman_collection.json` collection in postman and call _Create a new delivery_
-- call respond url and pass your defined pin as query param `pin`
+- open respond `trackingUrl` in your browser and replace `YOUR_PIN` with your defined pin as query param
 ```shell
-curl -X 'GET' 'http://...?pin=<YOUR_PIN>' -H 'accept: application/json' | jq
+curl -X 'GET' 'http://localhost:3081/v1.0/invoke/smarttracker-app-id/method/api/trackings/...?pin=YOUR_PIN' -H 'accept: application/json' | jq
 ```
-- Repeat the call after 2 minutes to see the currently attached coordinates in the payload
+- Refresh the view after 2 minutes to see the currently attached coordinates in the payload
 
 ## Further links
 - UI to explore, publish and subscribe kafka messages: https://www.getkadeck.com/#/
