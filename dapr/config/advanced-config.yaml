@@ -15,7 +15,6 @@ spec:
       advancedRegistration:
         name: "${APP_ID}"
         port: ${APP_PORT}
-        address: "${HOST_ADDRESS}"
         checks:
           - name: "Dapr Health Status"
             checkID: "daprHealth:${APP_ID}"
