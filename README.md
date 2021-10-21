@@ -166,6 +166,7 @@ cd rentadrone
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for rentadrone-app-id
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
 
@@ -206,6 +207,7 @@ cd dronesim
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for dronesim-app-id
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
 
@@ -249,6 +251,7 @@ cd smarttracker
 
 # add consul service mesh sidecar envoy
 consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for smarttracker-app-id
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
 
