@@ -98,6 +98,7 @@ consul agent -dev -enable-script-checks -config-dir=consul/config
 ```shell
 consul agent \
 -ui \
+-dev \
 -enable-script-checks=true \
 -data-dir=consul/data \
 -config-dir=consul/config \
@@ -165,8 +166,8 @@ mvn -q spring-boot:run
 cd rentadrone
 
 # add consul service mesh sidecar envoy
-consul connect envoy -sidecar-for rentadrone-app-id -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for rentadrone-app-id
+consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001 -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for rentadrone-app-id -admin-bind localhost:19001
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
 
@@ -206,8 +207,8 @@ mvn -q spring-boot:run
 cd dronesim
 
 # add consul service mesh sidecar envoy
-consul connect envoy -sidecar-for dronesim-app-id -bootstrap > ../consul/envoy/dronesim-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for dronesim-app-id
+consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002 -bootstrap > ../consul/envoy/dronesim-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for dronesim-app-id -admin-bind localhost:19002
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
 
@@ -250,8 +251,8 @@ mvn -q spring-boot:run
 cd smarttracker 
 
 # add consul service mesh sidecar envoy
-consul connect envoy -sidecar-for smarttracker-app-id -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
-# alternativ with built-in proxy: consul connect proxy -sidecar-for smarttracker-app-id
+consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003 -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
+# alternativ with built-in proxy: consul connect proxy -sidecar-for smarttracker-app-id -admin-bind localhost:19003
 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
 
