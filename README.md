@@ -125,6 +125,7 @@ consul members
 
 ### Update `secrets.json` file wit current host and guest ip addresses
 - Determine ip addresses and update `secrets.json`. E.g., with ipconfig/ifconfig. like  192.168.178.83
+>**Note: This currently does not work with `bindings.yaml`, so the ip address must also be adjusted as a workaround in the `bindings.yaml` file. 
 
 ### Build projects
 - in _rentadrone_ project folder

@@ -10,9 +10,7 @@ spec:
   - name: consumerID
     value: "dronesim-app-id"
   - name: url
-    secretKeyRef:
-      name: binding.urlGuestMachine
-      key: binding.urlGuestMachine
+    value: "tcp://192.168.178.83:1883"
   - name: topic
     value: "trackingPositionChangedTopic"
   - name: qos
