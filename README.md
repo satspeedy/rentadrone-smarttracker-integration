@@ -76,7 +76,6 @@ setx GOOGLE_API_KEY "<YOUR GOOGLE_API_KEY>"
 ```shell
 consul agent \
 -server \
--bootstrap-expect=1 \
 -ui \
 -data-dir=consul/data \
 -config-dir=consul/config \
