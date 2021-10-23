@@ -47,6 +47,10 @@ Contact: https://github.com/satspeedy
     - Linux: `$HOME/.dapr`
   - Add local secret store file
     - see [dapr/how-to-add-local-secret-store-file.md](dapr/how-to-add-local-secret-store-file.md)
+  - Download sentry binary and unzip to folder `$HOME/.dapr`
+    - See https://github.com/dapr/dapr/releases
+  - Create a directory for sentry self signed root certs
+    - `mkdir -p $HOME/.dapr/certs`
 - Set required environment variables
 >**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service (see below for individual ports).**
 ```bash
@@ -59,6 +63,7 @@ export AZURE_CLIENT_SECRET="<YOUR AZURE_CLIENT_SECRET>"
 export AZURE_TENANT_ID="<YOUR AZURE_TENANT_ID>"
 export AZURE_VAULT_URL="<YOUR AZURE_VAULT_URL>"
 export GOOGLE_API_KEY="<YOUR GOOGLE_API_KEY>"
+export NAMESPACE="default"
 
 # Windows
 setx AZURE_CLIENT_ID "<YOUR AZURE_CLIENT_ID>"
@@ -66,6 +71,7 @@ setx AZURE_CLIENT_SECRET "<YOUR AZURE_CLIENT_SECRET>"
 setx AZURE_TENANT_ID "<YOUR AZURE_TENANT_ID>"
 setx AZURE_VAULT_URL "<YOUR AZURE_VAULT_URL>"
 setx GOOGLE_API_KEY "<YOUR GOOGLE_API_KEY>"
+setx NAMESPACE "default"
 ```
 
 ## Start-up
@@ -90,7 +96,6 @@ consul reload
 or start in simple dev mode: 
 consul agent -dev -enable-script-checks -config-dir=consul/config
 ```
-
 ### Start consul agent on guest machine - Only if one of the projects is running on a second machine
 - Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.83
 - Set host ip address as value for "bind" attribute in command below
@@ -126,6 +131,17 @@ consul members
 - Determine ip addresses and update `secrets.json`. E.g., with ipconfig/ifconfig. like  192.168.178.83
 >**Note: This currently does not work with `bindings.yaml`, so the ip address must also be adjusted as a workaround in the `bindings.yaml` file. 
 
+### Start sentry agent on host machine
+```shell
+$HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
+```
+
+### Start sentry agent on guest machine
+- Copy files from host machine `$HOME/.dapr/certs` to guest machine
+```shell
+$HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
+```
+
 ### Build projects
 - in _rentadrone_ project folder
 - in _smarttracker_ project folder
@@ -146,6 +162,12 @@ docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 # register service in consul
 consul services register -name=rentadrone-app-id
 # to deregister: consul services deregister -id=rentadrone-app-id
+
+# set defined dapr sentry environment variables (even in your IDE)
+export DAPR_TRUST_ANCHORS=`cat $HOME/.dapr/certs/ca.crt`
+export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
+export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
+export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
@@ -186,6 +208,12 @@ cd dronesim
 # register service in consul
 consul services register -name=dronesim-app-id
 # to deregister: consul services deregister -id=dronesim-app-id
+
+# set defined dapr sentry environment variables (even in your IDE)
+export DAPR_TRUST_ANCHORS=`cat $HOME/.dapr/certs/ca.crt`
+export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
+export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
+export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
@@ -229,6 +257,12 @@ docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 # register service in consul
 consul services register -name=smarttracker-app-id
 # to deregister: consul services deregister -id=smarttracker-app-id
+
+# set defined dapr sentry environment variables (even in your IDE)
+export DAPR_TRUST_ANCHORS=`cat $HOME/.dapr/certs/ca.crt`
+export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
+export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
+export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service)
 dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
