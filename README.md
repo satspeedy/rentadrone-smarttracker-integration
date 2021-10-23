@@ -81,13 +81,13 @@ setx NAMESPACE "default"
 - Set host ip address as value for "bind" attribute in command below
 ```shell
 consul agent \
--server \
--bootstrap-expect=1 \
--ui \
--data-dir=consul/data \
--config-dir=consul/config \
--dev \
--bind=<HOST_IP_ADDRESS>
+  -server \
+  -bootstrap-expect=1 \
+  -ui \
+  -data-dir=consul/data \
+  -config-dir=consul/config \
+  -dev \
+  -bind=<HOST_IP_ADDRESS>
 ```
 
 #### or reload when agent already running and configuration is changed
@@ -102,12 +102,10 @@ consul agent -dev -enable-script-checks -config-dir=consul/config
 - Set host ip address as value for "bind" attribute in command below
 ```shell
 consul agent \
--ui \
--dev \
--enable-script-checks=true \
--data-dir=consul/data \
--config-dir=consul/config \
--bind=<GUEST_IP_ADDRESS>
+  -enable-script-checks=true \
+  -data-dir=consul/data \
+  -config-dir=consul/config \
+  -bind=<GUEST_IP_ADDRESS>
 ```
 
 ### Join consul agent on host machine server - Only if one of the projects is running on a second machine
@@ -133,12 +131,14 @@ consul members
 >**Note: This currently does not work with `bindings.yaml`, so the ip address must also be adjusted as a workaround in the `bindings.yaml` file. 
 
 ### Start sentry agent on host machine
+- Start Dapr Sentry
 ```shell
 $HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
 ```
 
 ### Start sentry agent on guest machine
 - Copy files from host machine `$HOME/.dapr/certs` to guest machine
+- Start Dapr Sentry
 ```shell
 $HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
 ```
