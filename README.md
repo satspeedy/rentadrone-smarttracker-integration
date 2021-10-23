@@ -82,6 +82,7 @@ setx NAMESPACE "default"
 ```shell
 consul agent \
 -server \
+-bootstrap-expect=1 \
 -ui \
 -data-dir=consul/data \
 -config-dir=consul/config \
@@ -169,8 +170,8 @@ export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
 export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
+# start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
+dapr run --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
 
 cd rentadrone
 
@@ -215,8 +216,8 @@ export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
 export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+# start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
+dapr run --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
 
 cd dronesim
 
@@ -264,8 +265,8 @@ export DAPR_CERT_CHAIN=`cat $HOME/.dapr/certs/issuer.crt`
 export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
-# start dapr sidecar (updates also consul service)
-dapr run --log-level debug --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+# start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
+dapr run --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
 
 cd smarttracker
 
