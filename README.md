@@ -30,6 +30,7 @@ Contact: https://github.com/satspeedy
 | SecretStore  | Local file                    | -            | Host & Guest  | -         | -           | -         |
 
 ## Setup
+>**Note: Scope is to set up on VMs. Checkout [install-k8s-minikube.md](k8s/install-k8s-minikube.md) for K8s/Minikube installation.**
 - Clone git repo.
 - Install consul according to product website
   - see https://www.consul.io/docs/install#install-consul

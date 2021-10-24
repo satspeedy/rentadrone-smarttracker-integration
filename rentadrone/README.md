@@ -13,10 +13,6 @@ Steps in _project folder_:
 ```bash
 docker compose -f deploy-compose/docker-compose.infra.yml up -d
 ```
-- Create the database pod
-```bash
-kubectl apply -f deploy-k8s/db.yaml
-```
 - Upload/refresh app image to minikube
 ```bash
 minikube image load com.hha/rentadrone:latest
@@ -24,6 +20,14 @@ minikube image load com.hha/rentadrone:latest
 - Create the app pod
 ```bash
 kubectl apply -f deploy-k8s/app.yaml
+```
+- Add environment variables
+```bash
+kubectl set env deploy rentadrone-app AZURE_CLIENT_ID=<YOUR AZURE_CLIENT_ID>
+kubectl set env deploy rentadrone-app AZURE_CLIENT_SECRET=<YOUR AZURE_CLIENT_SECRET>
+kubectl set env deploy rentadrone-app AZURE_TENANT_ID=<YOUR AZURE_TENANT_ID>
+kubectl set env deploy rentadrone-app AZURE_VAULT_URL=<YOUR AZURE_VAULT_URL>
+kubectl set env deploy rentadrone-app GOOGLE_API_KEY=<YOUR GOOGLE_API_KEY>
 ```
 - Determine the current port
 ```bash

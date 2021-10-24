@@ -11,6 +11,11 @@ spec:
     metadata:
       labels:
         app: rentadrone-app
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "rentadrone-app-id"
+        dapr.io/app-port: "8181"
+        dapr.io/config: "dapr-cp-config"
     spec:
       containers:
         - name: rentadrone-app
@@ -19,7 +24,7 @@ spec:
             - containerPort: 8181
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://rentadrone-db:25432/rentadrone-db
+              value: jdbc:postgresql://host.minikube.internal:25432/rentadrone-db
             - name: SPRING_DATASOURCE_USERNAME
               value: postgres
             - name: SPRING_DATASOURCE_PASSWORD
@@ -27,7 +32,7 @@ spec:
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
             - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
-              value: host.minikube.internal:19092
+              value: host.minikube.internal:9093
             - name: TZ
               value: Europe/Berlin
           imagePullPolicy: Never

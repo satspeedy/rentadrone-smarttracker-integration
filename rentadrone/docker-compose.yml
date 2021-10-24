@@ -22,7 +22,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_KAFKA_BOOTSTRAP-SERVERS=broker:19092
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=broker:9092
       - TZ=Europe/Berlin
     ports:
       - '8181:8181'
