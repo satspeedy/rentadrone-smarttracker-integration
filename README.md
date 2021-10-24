@@ -291,6 +291,9 @@ cd ../smarttracker
 # start infrastructure
 docker-compose -f deploy-compose/docker-compose.infra.yml up -d
 
+# Update sentry certs on guest machine
+# Copy files from host machine `$HOME/.dapr/certs` to guest machine
+
 # register service in consul
 consul services register -name=smarttracker-app-id
 # to deregister: consul services deregister -id=smarttracker-app-id
