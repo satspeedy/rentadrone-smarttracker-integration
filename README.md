@@ -17,6 +17,13 @@ Contact: https://github.com/satspeedy
 | DroneSim     | Host Machine  | 8282     | 3082                   | 52082                  |
 | SmartTracker | Guest Machine | 8383     | 3083                   | 52083                  |
 
+## Repositories
+| Service      | GitHub Repo                                |
+| -------------| ------------------------------------------ |
+| RentADrone   | https://github.com/satspeedy/rentadrone    |
+| DroneSim     | https://github.com/satspeedy/dronesim      |
+| SmartTracker | https://github.com/satspeedy/smarttracker  |
+
 ## Components
 
 | Type         | Component                     | Part of      | Operates on   | Host port | Docker port | Ext port  |
@@ -30,20 +37,36 @@ Contact: https://github.com/satspeedy
 | SecretStore  | Local file                    | -            | Host & Guest  | -         | -           | -         |
 
 ## Setup
->**Note: Scope is to set up on VMs. Checkout [install-k8s-minikube.md](k8s/install-k8s-minikube.md) for K8s/Minikube installation.**
-- Clone git repo.
-- Install consul according to product website
+>**Note: Scope is to set up everything on VMs. Checkout [install-k8s-minikube.md](k8s/install-k8s-minikube.md) to set up host machine related components (Dapr, Consul, RentADrone and DroneSim) on minikube.**
+
+- Clone git repositories in same folder on host machine
+```shell
+mkdir -p $HOME/projectwork
+cd $HOME/projectwork
+git clone https://github.com/satspeedy/rentadrone-smarttracker-integration
+git clone https://github.com/satspeedy/rentadrone
+git clone https://github.com/satspeedy/dronesim
+```
+
+- Clone git repositories in same folder on guest machine
+```shell
+mkdir -p $HOME/projectwork
+cd $HOME/projectwork
+git clone https://github.com/satspeedy/rentadrone-smarttracker-integration
+git clone https://github.com/satspeedy/smarttracker
+```
+
+- Install consul according to product website on host and guest machine
   - see https://www.consul.io/docs/install#install-consul
-- Install envoy according to product website or func-e website and add binary to PATH
-  - see https://www.envoyproxy.io/docs/envoy/latest/start/start.html
+
+- Install envoy according to func-e website and add binary to PATH on host and guest machine
   - see https://func-e.io/
-- Install dapr according to product website
+
+- Install dapr according to product website on host and guest machine
   - see https://docs.dapr.io/getting-started/install-dapr-cli/
-- Configure Dapr
-  - On host machine: Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml`
-    - Windows: `%USERPROFILE%\.dapr\`
-    - Linux: `$HOME/.dapr`
-  - On guest machine: Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml` and replace _tracing_ endpointAddress `localhost` via host machine ip
+
+- Configure Dapr on host machine
+  - Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml`
     - Windows: `%USERPROFILE%\.dapr\`
     - Linux: `$HOME/.dapr`
   - Add local secret store file
@@ -52,6 +75,18 @@ Contact: https://github.com/satspeedy
     - See https://github.com/dapr/dapr/releases
   - Create a directory for sentry self signed root certs
     - `mkdir -p $HOME/.dapr/certs`
+
+- Configure Dapr on guest machine
+  - Add adjusted dapr configuration file `dapr/config/advanced-config.yaml` in user folder as `config.yaml` and replace _tracing_ endpointAddress `localhost` via host machine ip
+    - Windows: `%USERPROFILE%\.dapr\`
+    - Linux: `$HOME/.dapr`
+  - Add local secret store file
+    - see [dapr/how-to-add-local-secret-store-file.md](dapr/how-to-add-local-secret-store-file.md)
+  - Download sentry binary and unzip to folder `$HOME/.dapr`
+    - See https://github.com/dapr/dapr/releases
+  - Create a directory for sentry self signed root certs
+    - `mkdir -p $HOME/.dapr/certs`
+
 - Set required environment variables
 >**Note: Add also in IDE to Run/Debug directly from IDE and furthermore add the individual DAPR_HTTP_PORT=... and DAPR_GRPC_PORT=... per service (see below for individual ports).**
 ```bash
@@ -59,19 +94,19 @@ Contact: https://github.com/satspeedy
 ## Open the current user’s .bashrc file
 vi ~/.bashrc
 ## Add the export command for every environment variable and save
-export AZURE_CLIENT_ID="<YOUR AZURE_CLIENT_ID>"
-export AZURE_CLIENT_SECRET="<YOUR AZURE_CLIENT_SECRET>"
-export AZURE_TENANT_ID="<YOUR AZURE_TENANT_ID>"
-export AZURE_VAULT_URL="<YOUR AZURE_VAULT_URL>"
-export GOOGLE_API_KEY="<YOUR GOOGLE_API_KEY>"
+export AZURE_CLIENT_ID="<YOUR_AZURE_CLIENT_ID>"
+export AZURE_CLIENT_SECRET="<YOUR_AZURE_CLIENT_SECRET>"
+export AZURE_TENANT_ID="<YOUR_AZURE_TENANT_ID>"
+export AZURE_VAULT_URL="<YOUR_AZURE_VAULT_URL>"
+export GOOGLE_API_KEY="<YOUR_GOOGLE_API_KEY>"
 export NAMESPACE="default"
 
 # Windows
-setx AZURE_CLIENT_ID "<YOUR AZURE_CLIENT_ID>"
-setx AZURE_CLIENT_SECRET "<YOUR AZURE_CLIENT_SECRET>"
-setx AZURE_TENANT_ID "<YOUR AZURE_TENANT_ID>"
-setx AZURE_VAULT_URL "<YOUR AZURE_VAULT_URL>"
-setx GOOGLE_API_KEY "<YOUR GOOGLE_API_KEY>"
+setx AZURE_CLIENT_ID "<YOUR_AZURE_CLIENT_ID>"
+setx AZURE_CLIENT_SECRET "<YOUR_AZURE_CLIENT_SECRET>"
+setx AZURE_TENANT_ID "<YOUR_AZURE_TENANT_ID>"
+setx AZURE_VAULT_URL "<YOUR_AZURE_VAULT_URL>"
+setx GOOGLE_API_KEY "<YOUR_GOOGLE_API_KEY>"
 setx NAMESPACE "default"
 ```
 
@@ -94,10 +129,8 @@ consul agent \
 #### or reload when agent already running and configuration is changed
 ```shell
 consul reload
----
-or start in simple dev mode: 
-consul agent -dev -enable-script-checks -config-dir=consul/config
 ```
+
 ### Start consul agent on guest machine - Only if one of the projects is running on a second machine
 - Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.83
 - Set host ip address as value for "bind" attribute in command below
@@ -114,7 +147,7 @@ consul agent \
 - Set host ip address as value for "bind" attribute in command below
 ```shell
 consul join <HOST_IP_ADDRESS>
-# consul leave to leave gracefully
+# `consul leave` to leave gracefully
 ```
 
 ### Check consul members for both nodes - Only if one of the projects is running on a second machine
@@ -125,11 +158,12 @@ consul members
 
 ### Update current host ip address in rentadrone project `docker-compose.infra.yml` file 
 - Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
+- Switch to rentadrone project
 - Set host ip address as value for entry "KAFKA_ADVERTISED_LISTENERS" with key "LISTENER_EXT"
 
-### Update `secrets.json` file wit current host and guest ip addresses
+### Update `secrets.json` file with current host and guest ip addresses
 - Determine ip addresses and update `secrets.json`. E.g., with ipconfig/ifconfig. like  192.168.178.83
->**Note: This currently does not work with `bindings.yaml`, so the ip address must also be adjusted as a workaround in the `bindings.yaml` file. 
+>**Note: This currently does not work with `bindings.yaml`, so the ip address must also be adjusted as a workaround in the `bindings.yaml` file.**
 
 ### Start sentry agent on host machine
 - Start Dapr Sentry
