@@ -8,23 +8,23 @@
 {
     "pubsub":{
         "redisPassword": "",
-        "urlBrokerHostMachine": "<YOUR HOST_MACHINE_IP>:6379"
+        "urlBrokerHostMachine": "<YOUR_HOST_MACHINE_IP>:6379"
     },
     "statestore":{
         "redisPassword": "",
-        "urlBrokerHostMachine": "<YOUR HOST_MACHINE_IP>:6379"
+        "urlBrokerHostMachine": "<YOUR_HOST_MACHINE_IP>:6379"
     },
     "secret-store-azurekeyvault-rentadrone":{
-        "vaultName": "<YOUR AZURE_VAULT_URL>",
-        "azureTenantId": "<YOUR AZURE_TENANT_ID>",
-        "azureClientId": "<YOUR AZURE_CLIENT_ID>",
-        "azureClientSecret": "<YOUR AZURE_CLIENT_SECRET>"
+        "vaultName": "<YOUR_AZURE_VAULT_URL>",
+        "azureTenantId": "<YOUR_AZURE_TENANT_ID>",
+        "azureClientId": "<YOUR_AZURE_CLIENT_ID>",
+        "azureClientSecret": "<YOUR_AZURE_CLIENT_SECRET>"
     },
     "binding": {
-        "urlGuestMachine": "tcp://<YOUR GUEST_MACHINE_IP>:1883"
+        "urlGuestMachine": "tcp://<YOUR_GUEST_MACHINE_IP>:1883"
     },
     "pubsub-kafka" :{
-        "urlBrokerHostMachine": "<YOUR HOST_MACHINE_IP>:9092"
+        "urlBrokerHostMachine": "<YOUR_HOST_MACHINE_IP>:9092"
     }
 }
 ```
