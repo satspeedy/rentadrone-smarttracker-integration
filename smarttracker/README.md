@@ -1,6 +1,8 @@
 # smarttracker
 SmartTracker - Live-Tracking System
 
+>**Start with [rentadrone-smarttracker-integration project](https://github.com/satspeedy/rentadrone-smarttracker-integration) first before continuing on this page.**
+
 ## Quickstart with minikube
 
 - Download and start a minikube cluster
@@ -18,6 +20,13 @@ minikube image load com.hha/smarttracker:latest
 - Create the app pod
 ```bash
 kubectl apply -f deploy-k8s/app.yaml
+```
+- Add environment variables
+```bash
+kubectl set env deploy smarttracker-app AZURE_CLIENT_ID=<YOUR_AZURE_CLIENT_ID>
+kubectl set env deploy smarttracker-app AZURE_CLIENT_SECRET=<YOUR_AZURE_CLIENT_SECRET>
+kubectl set env deploy smarttracker-app AZURE_TENANT_ID=<YOUR_AZURE_TENANT_ID>
+kubectl set env deploy smarttracker-app AZURE_VAULT_URL=<YOUR_AZURE_VAULT_URL>
 ```
 - Determine the current port
 ```bash
@@ -80,11 +89,16 @@ docker run \
 --name smarttracker-app \
 --rm \
 -p 8383:8383 \
+-p 3083:3083 \
+-p 52083:52083 \
 -e SPRING_REDIS_HOST=host.docker.internal \
 -e SPRING_REDIS_PORT=26379 \
 -e MQTT_BROKER_HOST=host.docker.internal \
 -e MQTT_BROKER_PORT=1883 \
 -e TZ=Europe/Berlin \
+-e DAPR_HTTP_PORT=3083 \
+-e DAPR_GRPC_PORT=52083 \
+-e NAMESPACE=default \
 -d com.hha/smarttracker:latest
 ```
 - Stop project
@@ -98,3 +112,6 @@ docker rm -f smarttracker-app smarttracker-store smarttracker-mqtt-broker
 
 ## Open Tasks
 - [ ] UI to visualize a tracking
+- [ ] Mosquitto Mqtt Broker mosquitto.conf file is only working on unix
+- [ ] Pass environment variables DAPR_TRUST_ANCHORS, DAPR_CERT_CHAIN and DAPR_CERT_KEY to execute plain docker container with mTLS
+- [ ] Pass environment variables AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID and AZURE_VAULT_URL to execute plain docker container with Azure key vault

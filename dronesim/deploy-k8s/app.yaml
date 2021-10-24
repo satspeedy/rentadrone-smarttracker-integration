@@ -11,6 +11,11 @@ spec:
     metadata:
       labels:
         app: dronesim-app
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dronesim-app-id"
+        dapr.io/app-port: "8282"
+        dapr.io/config: "dapr-cp-config"
     spec:
       containers:
         - name: dronesim-app
@@ -19,7 +24,7 @@ spec:
             - containerPort: 8282
           env:
             - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
-              value: host.minikube.internal:19092
+              value: host.minikube.internal:9093
             - name: TZ
               value: Europe/Berlin
           imagePullPolicy: Never

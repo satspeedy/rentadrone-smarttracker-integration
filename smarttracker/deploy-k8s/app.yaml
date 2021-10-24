@@ -11,6 +11,11 @@ spec:
     metadata:
       labels:
         app: smarttracker-app
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "smarttracker-app-id"
+        dapr.io/app-port: "8383"
+        dapr.io/config: "dapr-cp-config"
     spec:
       containers:
         - name: smarttracker-app

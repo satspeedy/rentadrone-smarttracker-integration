@@ -20,8 +20,20 @@ services:
       - MQTT_BROKER_HOST=mosquitto-mqtt-broker
       - MQTT_BROKER_PORT=1883
       - TZ=Europe/Berlin
+      - DAPR_HTTP_PORT=3083
+      - DAPR_GRPC_PORT=52083
+      - DAPR_TRUST_ANCHORS=${DAPR_TRUST_ANCHORS}
+      - DAPR_CERT_CHAIN=${DAPR_CERT_CHAIN}
+      - DAPR_CERT_KEY=${DAPR_CERT_KEY}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_VAULT_URL=${AZURE_VAULT_URL}
+      - NAMESPACE=default
     ports:
       - '8383:8383'
+      - '3083:3083'
+      - '52083:52083'
 
   redis-store:
     image: 'redis:alpine'

@@ -24,24 +24,37 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=broker:9092
       - TZ=Europe/Berlin
+      - DAPR_HTTP_PORT=3081
+      - DAPR_GRPC_PORT=52081
+      - DAPR_TRUST_ANCHORS=${DAPR_TRUST_ANCHORS}
+      - DAPR_CERT_CHAIN=${DAPR_CERT_CHAIN}
+      - DAPR_CERT_KEY=${DAPR_CERT_KEY}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_VAULT_URL=${AZURE_VAULT_URL}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - NAMESPACE=default
     ports:
       - '8181:8181'
+      - '3081:3081'
+      - '52081:52081'
 
-  app-dapr:
-    image: "daprio/daprd:latest"
-    container_name: 'rentadrone-app-dapr'
-    command: [ "./daprd",
-               "-app-id", "rentadrone-app-id",
-               "-app-port", "8181",
-               "-components-path", "/components",
-               "-placement-host-address", "host.docker.internal:6050",
-               "-config","../dapr/config/advanced-config.yaml"]
-    volumes:
-      - "../dapr/components/:/components"
-    depends_on:
-    - app
-    - broker
-    network_mode: "service:app"
+#  app-dapr:
+#    image: "daprio/daprd:latest"
+#    container_name: 'rentadrone-app-dapr'
+#    command: [ "./daprd",
+#               "-app-id", "rentadrone-app-id",
+#               "-app-port", "8181",
+#               "-components-path", "/components",
+#               "-placement-host-address", "host.docker.internal:6050",
+#               "-config","../dapr/config/advanced-config.yaml"]
+#    volumes:
+#      - "../dapr/components/:/components"
+#    depends_on:
+#    - app
+#    - broker
+#    network_mode: "service:app"
 
   db:
     image: 'postgres:13.1-alpine'
