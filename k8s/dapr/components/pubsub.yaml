@@ -1,0 +1,20 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: default
+spec:
+  type: pubsub.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    secretKeyRef:
+      name: pubsub-secret
+      key: urlBrokerHostMachine
+  - name: redisPassword
+    secretKeyRef:
+      name: pubsub-secret
+      key: redisPassword
+scopes:
+  - rentadrone-app-id
+  - smarttracker-app-id
