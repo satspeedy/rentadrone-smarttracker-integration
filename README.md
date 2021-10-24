@@ -158,7 +158,7 @@ consul members
 
 ### Update current host ip address in rentadrone project `docker-compose.infra.yml` file 
 - Determine host ip address. E.g., with ipconfig/ifconfig. like 192.168.178.31
-- Switch to rentadrone project
+- Switch to [rentadrone](https://github.com/satspeedy/rentadrone) project
 - Set host ip address as value for entry "KAFKA_ADVERTISED_LISTENERS" with key "LISTENER_EXT"
 
 ### Update `secrets.json` file with current host and guest ip addresses
@@ -179,18 +179,18 @@ $HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster
 ```
 
 ### Build projects
-- in _rentadrone_ project folder
-- in _smarttracker_ project folder
-- in _dronesim_ project folder
+- in _[rentadrone](https://github.com/satspeedy/rentadrone)_ project folder
+- in _[smarttracker](https://github.com/satspeedy/smarttracker)_ project folder
+- in _[dronesim](https://github.com/satspeedy/dronesim)_ project folder
 ```shell
 mvn clean package
 ```
 
 ### Start Infra, Dapr and Services in each project folder
-- in _rentadrone_ project folder
+- in _[rentadrone](https://github.com/satspeedy/rentadrone)_ project folder
 ```shell
 # switch to rentadrone project folder
-cd rentadrone
+cd ../rentadrone
 
 # start infrastructure
 docker-compose -f deploy-compose/docker-compose.infra.yml up -d
@@ -206,9 +206,9 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
+dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
 
-cd rentadrone
+cd ../rentadrone
 
 # set defined dapr ports as environment variable (even in your IDE as mentioned above)
 ## Linux 
@@ -221,25 +221,25 @@ setx DAPR_GRPC_PORT "52081"
 # start service
 mvn -q spring-boot:run
 
-cd rentadrone
+cd ../rentadrone
 
 # add consul service mesh sidecar envoy
 ## Linux
 consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001
 ## Windows
-consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001 -bootstrap > ../consul/envoy/rentadrone-bootstrap.json
+consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/rentadrone-bootstrap.json
 
 ## Following steps are only necessary on Windows: 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
 
 # start envoy with bootstrapped config
-envoy -c ../consul/envoy/rentadrone-bootstrap.json
+envoy -c ../rentadrone-smarttracker-integration/consul/envoy/rentadrone-bootstrap.json
 ```
 
-- in _dronesim_ project folder
+- in _[dronesim](https://github.com/satspeedy/dronesim)_ project folder
 ```shell
 # switch to dronesim project folder
-cd dronesim
+cd ../dronesim
 
 # register service in consul
 consul services register -name=dronesim-app-id
@@ -252,9 +252,9 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
 
-cd dronesim
+cd ../dronesim
 
 # set defined dapr ports as environment variable (even in your IDE as mentioned above)
 ## Linux 
@@ -267,25 +267,25 @@ setx DAPR_GRPC_PORT "52082"
 # start service
 mvn -q spring-boot:run
 
-cd dronesim
+cd ../dronesim
 
 # add consul service mesh sidecar envoy
 ## Linux
 consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002
 ## Windows
-consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002 -bootstrap > ../consul/envoy/dronesim-bootstrap.json
+consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/dronesim-bootstrap.json
 
 ## Following steps are only necessary on Windows:  
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
 
 # start envoy with bootstrapped config
-envoy -c ../consul/envoy/dronesim-bootstrap.json
+envoy -c ../rentadrone-smarttracker-integration/consul/envoy/dronesim-bootstrap.json
 ```
 
-- in _smarttracker_ project folder
+- in _[smarttracker](https://github.com/satspeedy/smarttracker)_ project folder
 ```shell
 # switch to smarttracker project folder
-cd smarttracker
+cd ../smarttracker
 
 # start infrastructure
 docker-compose -f deploy-compose/docker-compose.infra.yml up -d
@@ -301,9 +301,9 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
 
-cd smarttracker
+cd ../smarttracker
 
 # set defined dapr ports as environment variable (even in your IDE as mentioned above)
 ## Linux 
@@ -316,23 +316,23 @@ setx DAPR_GRPC_PORT "52083"
 # start service
 mvn -q spring-boot:run
 
-cd smarttracker 
+cd ../smarttracker 
 
 # add consul service mesh sidecar envoy
 ## Linux
 consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003
 ## Windows
-consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003 -bootstrap > ../consul/envoy/smarttracker-bootstrap.json
+consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/smarttracker-bootstrap.json
 
 ## Following steps are only necessary on Windows:
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
 
 # start envoy with bootstrapped config
-envoy -c ../consul/envoy/smarttracker-bootstrap.json
+envoy -c ../rentadrone-smarttracker-integration/consul/envoy/smarttracker-bootstrap.json
 ```
 
 ### Test an example request via RentADrone Dapr Sidecar to SmartTracker with postman
-- in _rentadrone_ project folder 
+- in _[rentadrone](https://github.com/satspeedy/rentadrone)_ project folder 
   - import `rent-a-drone.postman_collection.json` collection in postman and call _Create a new delivery_
 - open respond `trackingUrl` in your browser and replace `YOUR_PIN` with your defined pin as query param
 ```shell
