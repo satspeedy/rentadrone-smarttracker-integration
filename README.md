@@ -169,14 +169,16 @@ consul members
 ### Start sentry agent on host machine
 - Start Dapr Sentry
 ```shell
-$HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
+$HOME/.dapr/sentry --issuer-credentials \
+  $HOME/.dapr/certs --trust-domain cluster.local
 ```
 
 ### Start sentry agent on guest machine
 - Copy files from host machine `$HOME/.dapr/certs` to guest machine
 - Start Dapr Sentry
 ```shell
-$HOME/.dapr/sentry --issuer-credentials $HOME/.dapr/certs --trust-domain cluster.local
+$HOME/.dapr/sentry --issuer-credentials \
+  $HOME/.dapr/certs --trust-domain cluster.local
 ```
 
 ### Build projects
@@ -207,7 +209,12 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id rentadrone-app-id --app-port 8181 --dapr-http-port 3081 --dapr-grpc-port 52081
+dapr run \
+  --components-path ../rentadrone-smarttracker-integration/dapr/components \
+  --app-id rentadrone-app-id \
+  --app-port 8181 \
+  --dapr-http-port 3081 \
+  --dapr-grpc-port 52081
 
 cd ../rentadrone
 
@@ -226,9 +233,14 @@ cd ../rentadrone
 
 # add consul service mesh sidecar envoy
 ## Linux
-consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001
+consul connect envoy \
+  -sidecar-for rentadrone-app-id \
+  -admin-bind localhost:19001
 ## Windows
-consul connect envoy -sidecar-for rentadrone-app-id -admin-bind localhost:19001 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/rentadrone-bootstrap.json
+consul connect envoy \
+  -sidecar-for rentadrone-app-id \
+  -admin-bind localhost:19001 \
+  -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/rentadrone-bootstrap.json
 
 ## Following steps are only necessary on Windows: 
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/rentadrone-proxy.log"
@@ -253,7 +265,12 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id dronesim-app-id --app-port 8282 --dapr-http-port 3082 --dapr-grpc-port 52082
+dapr run \
+  --components-path ../rentadrone-smarttracker-integration/dapr/components \
+  --app-id dronesim-app-id \
+  --app-port 8282 \
+  --dapr-http-port 3082 \
+  --dapr-grpc-port 52082
 
 cd ../dronesim
 
@@ -272,9 +289,14 @@ cd ../dronesim
 
 # add consul service mesh sidecar envoy
 ## Linux
-consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002
+consul connect envoy \
+  -sidecar-for dronesim-app-id \
+  -admin-bind localhost:19002
 ## Windows
-consul connect envoy -sidecar-for dronesim-app-id -admin-bind localhost:19002 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/dronesim-bootstrap.json
+consul connect envoy \
+  -sidecar-for dronesim-app-id \
+  -admin-bind localhost:19002 \
+  -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/dronesim-bootstrap.json
 
 ## Following steps are only necessary on Windows:  
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/dronesim-proxy.log"
@@ -305,7 +327,12 @@ export DAPR_CERT_KEY=`cat $HOME/.dapr/certs/issuer.key`
 export NAMESPACE=default
 
 # start dapr sidecar (updates also consul service; use `--log-level debug` for debug info)
-dapr run --components-path ../rentadrone-smarttracker-integration/dapr/components --app-id smarttracker-app-id --app-port 8383 --dapr-http-port 3083 --dapr-grpc-port 52083
+dapr run \
+  --components-path ../rentadrone-smarttracker-integration/dapr/components \
+  --app-id smarttracker-app-id \
+  --app-port 8383 \
+  --dapr-http-port 3083 \
+  --dapr-grpc-port 52083
 
 cd ../smarttracker
 
@@ -324,9 +351,14 @@ cd ../smarttracker
 
 # add consul service mesh sidecar envoy
 ## Linux
-consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003
+consul connect envoy \
+  -sidecar-for smarttracker-app-id \
+  -admin-bind localhost:19003
 ## Windows
-consul connect envoy -sidecar-for smarttracker-app-id -admin-bind localhost:19003 -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/smarttracker-bootstrap.json
+consul connect envoy \
+  -sidecar-for smarttracker-app-id \
+  -admin-bind localhost:19003 \
+  -bootstrap > ../rentadrone-smarttracker-integration/consul/envoy/smarttracker-bootstrap.json
 
 ## Following steps are only necessary on Windows:
 # replace "access_log_path" with "<PATH TO PROJECT DIR>/consul/envoy/smarttracker-proxy.log"
@@ -340,7 +372,9 @@ envoy -c ../rentadrone-smarttracker-integration/consul/envoy/smarttracker-bootst
   - import `rent-a-drone.postman_collection.json` collection in postman and call _Create a new delivery_
 - open respond `trackingUrl` in your browser and replace `YOUR_PIN` with your defined pin as query param
 ```shell
-curl -X 'GET' 'http://localhost:3081/v1.0/invoke/smarttracker-app-id/method/api/trackings/...?pin=YOUR_PIN' -H 'accept: application/json' | jq
+curl -X 'GET' \
+  'http://localhost:3081/v1.0/invoke/smarttracker-app-id/method/api/trackings/...?pin=YOUR_PIN' \
+  -H 'accept: application/json' | jq
 ```
 - Refresh the view after 2 minutes to see the currently attached coordinates in the payload
 
