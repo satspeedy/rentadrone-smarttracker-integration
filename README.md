@@ -24,17 +24,18 @@ Contact: https://github.com/satspeedy
 | DroneSim     | https://github.com/satspeedy/dronesim      |
 | SmartTracker | https://github.com/satspeedy/smarttracker  |
 
-## Components
+## Components ()
+Docker/Compose/K8s
 
-| Type         | Component                     | Part of      | Operates on   | Host port | Docker port | Ext port  |
-| ------------ | ------------------------------| -------------| ------------- | --------- | ----------- |---------- |
-| PubSub       | Kafka                         | RentADrone   | Host Machine  | 9092      | 29092       | 29094     |
-| DB           | PostgreSQL                    | RentADrone   | Host Machine  | 25432     | 5432        | -         |
-| StateStore   | Redis                         | SmartTracker | Guest Machine | 26379     | 6379        | 26379     |
-| Binding      | Eclipse Mosquitto MQTT Broker | SmartTracker | Guest Machine | 1883      | 1883        | 1883      |
-| StateStore   | Redis (Provided by Dapr)      | Shared       | Host Machine  | 6379      | -           | 6379      |
-| SecretStore  | Azure Key Vault               | Shared       | Azure         | -         | -           | -         |
-| SecretStore  | Local file                    | -            | Host & Guest  | -         | -           | -         |
+| Type         | Component                     | Part of      | Operates on   | Host port |Docker/Compos/K8s| Ext port  |
+| ------------ | ------------------------------| -------------| ------------- | --------- | --------------- |---------- |
+| PubSub       | Kafka                         | RentADrone   | Host Machine  | 9092      | 9094/29092/9093 | 29094     |
+| DB           | PostgreSQL                    | RentADrone   | Host Machine  | 25432     | 5432            | -         |
+| StateStore   | Redis                         | SmartTracker | Guest Machine | 26379     | 6379            | 26379     |
+| Binding      | Eclipse Mosquitto MQTT Broker | SmartTracker | Guest Machine | 1883      | 1883            | 1883      |
+| StateStore   | Redis (Provided by Dapr)      | Shared       | Host Machine  | 6379      | -               | 6379      |
+| SecretStore  | Azure Key Vault               | Shared       | Azure         | -         | -               | -         |
+| SecretStore  | Local file                    | -            | Host & Guest  | -         | -               | -         |
 
 ## Setup
 >**Note: Scope is to set up everything on VMs. Checkout [install-k8s-minikube.md](k8s/install-k8s-minikube.md) to set up host machine related components (Dapr, Consul, RentADrone and DroneSim) on minikube.**
