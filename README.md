@@ -24,9 +24,7 @@ Contact: https://github.com/satspeedy
 | DroneSim     | https://github.com/satspeedy/dronesim      |
 | SmartTracker | https://github.com/satspeedy/smarttracker  |
 
-## Components ()
-Docker/Compose/K8s
-
+## Components
 | Type         | Component                     | Part of      | Operates on   | Host port |Docker/Compos/K8s| Ext port  |
 | ------------ | ------------------------------| -------------| ------------- | --------- | --------------- |---------- |
 | PubSub       | Kafka                         | RentADrone   | Host Machine  | 9092      | 9094/29092/9093 | 29094     |
