@@ -1,0 +1,10 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: dapr-cp-config
+  namespace: default
+spec:
+  mtls:
+    enabled: true
+    allowedClockSkew: 15m
+    workloadCertTTL: 24h
